@@ -1,0 +1,32 @@
+.DS_Store
+.env
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Node
+/frontend/node_modules/
+/frontend/dist/
+/frontend/dist-ssr/
+/frontend/.vite/
+/frontend/npm-debug.log*
+
+# Python
+/backend/__pycache__/
+/backend/*.pyc
+/backend/*.pyo
+/backend/*.pyd
+/backend/.venv/
+/backend/venv/
+/backend/env/
+/backend/.pytest_cache/
+/backend/htmlcov/
+/backend/.mypy_cache/
+/backend/.ipynb_checkpoints/
