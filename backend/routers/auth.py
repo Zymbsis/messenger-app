@@ -1,13 +1,16 @@
+from typing import Annotated
+
 from core.auth.cookies import set_auth_cookies
 from core.auth.jwt import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES,
     create_access_token,
     create_refresh_token,
+    verify_token,
 )
 from core.auth.security import verify_password
 from core.db import SessionDependency
-from fastapi import APIRouter, HTTPException, Response, status
+from fastapi import APIRouter, Cookie, HTTPException, Response, status
 from repositories.user import UserRepository
 from schemas import UserCreate, UserRead
 
@@ -65,3 +68,25 @@ async def login(user_data: UserCreate, response: Response, session: SessionDepen
     )
 
     return {"message": "Logged in successfully"}
+
+
+@router.post("/refresh")
+async def refresh(response: Response, refresh_token: str | None = Cookie(default=None)):
+    if not refresh_token:
+        raise HTTPException(status_code=401, detail="Refresh token missing")
+
+    payload = verify_token(refresh_token)
+    user_id = payload.sub
+
+    access_token = create_access_token(data={"sub": str(user_id)})
+    new_refresh_token = create_refresh_token(data={"sub": str(user_id)})
+
+    set_auth_cookies(
+        response,
+        access_token,
+        new_refresh_token,
+        access_expires_minutes=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        refresh_expires_minutes=REFRESH_TOKEN_EXPIRE_MINUTES * 60,
+    )
+
+    return {"message": "Refreshed successfully"}
