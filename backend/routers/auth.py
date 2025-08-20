@@ -1,11 +1,12 @@
-from core.db import SessionDependency
-from core.security import (
+from core.auth.cookies import set_auth_cookies
+from core.auth.jwt import (
     ACCESS_TOKEN_EXPIRE_MINUTES,
     REFRESH_TOKEN_EXPIRE_MINUTES,
     create_access_token,
     create_refresh_token,
-    verify_password,
 )
+from core.auth.security import verify_password
+from core.db import SessionDependency
 from fastapi import APIRouter, HTTPException, Response, status
 from repositories.user import UserRepository
 from schemas import UserCreate, UserRead
@@ -18,7 +19,6 @@ router = APIRouter(
 
 @router.post(
     "/register",
-    response_model=UserRead,
     status_code=status.HTTP_201_CREATED,
 )
 async def register(user_data: UserCreate, session: SessionDependency):
@@ -31,9 +31,7 @@ async def register(user_data: UserCreate, session: SessionDependency):
             detail="Invalid credentials",
         )
 
-    new_user = await repo.create_user(
-        email=user_data.email, password=user_data.password
-    )
+    await repo.create_user(email=user_data.email, password=user_data.password)
 
     return {"message": "Registered successfully"}
 
@@ -58,22 +56,12 @@ async def login(user_data: UserCreate, response: Response, session: SessionDepen
     access_token = create_access_token(data={"sub": str(existing_user.id)})
     refresh_token = create_refresh_token(data={"sub": str(existing_user.id)})
 
-    response.set_cookie(
-        key="access_token",
-        value=access_token,
-        httponly=True,
-        max_age=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
-        secure=True,
-        samesite="lax",
-    )
-
-    response.set_cookie(
-        key="refresh_token",
-        value=refresh_token,
-        httponly=True,
-        max_age=REFRESH_TOKEN_EXPIRE_MINUTES * 60,
-        secure=True,
-        samesite="lax",
+    set_auth_cookies(
+        response,
+        access_token,
+        refresh_token,
+        access_expires_minutes=ACCESS_TOKEN_EXPIRE_MINUTES * 60,
+        refresh_expires_minutes=REFRESH_TOKEN_EXPIRE_MINUTES * 60,
     )
 
     return {"message": "Logged in successfully"}

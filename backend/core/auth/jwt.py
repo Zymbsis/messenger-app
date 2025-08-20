@@ -3,7 +3,6 @@ from datetime import datetime, timedelta, timezone
 
 import jwt
 from fastapi import HTTPException, status
-from passlib.context import CryptContext
 from schemas import TokenPayload
 
 SECRET_KEY = os.getenv("SECRET_KEY", "your-super-secret-key-default-for-dev")
@@ -12,17 +11,6 @@ ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30")
 REFRESH_TOKEN_EXPIRE_MINUTES = int(
     os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES", str(60 * 24 * 7 * 3))
 )
-
-
-pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
-
-
-def hash_password(password: str) -> str:
-    return pwd_context.hash(password)
-
-
-def verify_password(plain_password: str, hashed_password: str) -> bool:
-    return pwd_context.verify(plain_password, hashed_password)
 
 
 def _create_token(data: dict, expires_delta: timedelta) -> str:

@@ -1,4 +1,4 @@
-from core.security import hash_password
+from core.auth.security import hash_password
 from models import User
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
