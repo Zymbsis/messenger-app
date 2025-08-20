@@ -18,6 +18,11 @@ class UserRepository:
         result = await self.session.exec(statement)
         return result.one_or_none()
 
+    async def get_all_users(self, current_user_id: int) -> list[User]:
+        statement = select(User).where(User.id != current_user_id)
+        result = await self.session.exec(statement)
+        return result.all()
+
     async def create_user(self, email: str, password: str) -> User:
         hashed_password = hash_password(password)
         user = User(email=email, hashed_password=hashed_password)

@@ -8,7 +8,7 @@ services:
     working_dir: /app
     command: pipenv run fastapi run main.py --host 0.0.0.0 --port 8000 --reload
     environment:
-      - DATABASE_URL=postgresql://user:password@db:5432/dbname
+      - DATABASE_URL=postgresql://user:password@db:5432/messenger
     depends_on:
       - db
 
@@ -28,9 +28,11 @@ services:
     environment:
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
-      - POSTGRES_DB=dbname
+      - POSTGRES_DB=messenger
     volumes:
       - postgres_data:/var/lib/postgresql/data
+    ports:
+      - '5432:5432'
 
 volumes:
   postgres_data:
