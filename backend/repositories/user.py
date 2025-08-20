@@ -13,6 +13,11 @@ class UserRepository:
         result = await self.session.exec(statement)
         return result.one_or_none()
 
+    async def get_user_by_id(self, id: int) -> User | None:
+        statement = select(User).where(User.id == id)
+        result = await self.session.exec(statement)
+        return result.one_or_none()
+
     async def create_user(self, email: str, password: str) -> User:
         hashed_password = hash_password(password)
         user = User(email=email, hashed_password=hashed_password)
