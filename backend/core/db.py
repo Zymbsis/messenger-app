@@ -1,5 +1,7 @@
 import os
+from typing import Annotated
 
+from fastapi import Depends
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from sqlmodel import SQLModel
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -30,3 +32,6 @@ async def get_session() -> AsyncSession:
 
 async def close_db():
     await engine.dispose()
+
+
+SessionDependency = Annotated[AsyncSession, Depends(get_session)]
