@@ -10,7 +10,7 @@ SECRET_KEY = os.getenv("SECRET_KEY", "your-super-secret-key-default-for-dev")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
 ACCESS_TOKEN_EXPIRE_MINUTES = int(os.getenv("ACCESS_TOKEN_EXPIRE_MINUTES", "30"))
 REFRESH_TOKEN_EXPIRE_MINUTES = int(
-    os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES", str(60 * 24 * 7))
+    os.getenv("REFRESH_TOKEN_EXPIRE_MINUTES", str(60 * 24 * 7 * 3))
 )
 
 
