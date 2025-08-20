@@ -7,6 +7,8 @@ name = "pypi"
 fastapi = {extras = ["standard"], version = "*"}
 sqlmodel = "*"
 asyncpg = "*"
+passlib = {extras = ["bcrypt"], version = "*"}
+pyjwt = "*"
 
 [dev-packages]
 

@@ -1,8 +1,7 @@
 from contextlib import asynccontextmanager
 
+from core.db import close_db, init_db
 from fastapi import FastAPI
-
-from .core.db import close_db, init_db
 
 
 @asynccontextmanager
