@@ -71,7 +71,10 @@ async def login(user_data: UserCreate, response: Response, session: SessionDepen
 
 
 @router.post("/refresh")
-async def refresh(response: Response, refresh_token: str | None = Cookie(default=None)):
+async def refresh(
+    response: Response,
+    refresh_token: Annotated[str | None, Cookie(alias="refresh_token")] = None,
+):
     if not refresh_token:
         raise HTTPException(status_code=401, detail="Refresh token missing")
 

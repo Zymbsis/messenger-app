@@ -8,8 +8,13 @@ from repositories.user import UserRepository
 
 
 async def get_current_user(
-    session: SessionDependency, access_token: str = Cookie()
+    session: SessionDependency,
+    access_token: Annotated[str | None, Cookie(alias="access_token")] = None,
 ) -> User:
+    if not access_token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Access token missing"
+        )
     payload = verify_token(access_token)
     user_id = payload.sub
 
