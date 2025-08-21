@@ -31,3 +31,19 @@ class ChatRead(ChatCreate):
     user1_id: int
     created_at: datetime
     updated_at: datetime
+
+
+class MessageCreate(SQLModel):
+    content: str
+
+
+class MessageUpdate(MessageCreate):
+    pass
+
+
+class MessageRead(MessageCreate):
+    id: int
+    chat_id: int
+    sender_id: int
+    created_at: datetime
+    updated_at: datetime

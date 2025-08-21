@@ -8,7 +8,7 @@ from schemas import ChatCreate, ChatRead
 router = APIRouter(prefix="/chats", tags=["Chats"])
 
 
-@router.post("/", response_model=ChatRead, status_code=status.HTTP_201_CREATED)
+@router.post("", response_model=ChatRead, status_code=status.HTTP_201_CREATED)
 async def create_chat(
     chat_data: ChatCreate,
     current_user: CurrentUserDependency,
@@ -63,7 +63,7 @@ async def create_chat(
     )
 
 
-@router.get("/", response_model=list[ChatRead])
+@router.get("", response_model=list[ChatRead])
 async def get_chats(current_user: CurrentUserDependency, session: SessionDependency):
     repo = ChatRepository(session)
     return await repo.get_chats_by_user_id(current_user.id)

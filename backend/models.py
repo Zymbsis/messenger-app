@@ -1,7 +1,6 @@
 from datetime import datetime
 
 from pydantic import EmailStr
-from schemas import UserBase
 from sqlmodel import (
     CheckConstraint,
     Field,
@@ -12,7 +11,7 @@ from sqlmodel import (
 )
 
 
-class User(UserBase, table=True):
+class User(SQLModel, table=True):
     __tablename__ = "users"
 
     id: int | None = Field(default=None, primary_key=True)
@@ -31,6 +30,7 @@ class User(UserBase, table=True):
     chats_as_user2: list["Chat"] = Relationship(
         back_populates="user2", sa_relationship_kwargs={"foreign_keys": "Chat.user2_id"}
     )
+    sent_messages: list["Message"] = Relationship(back_populates="sender")
 
     @property
     def chats(self):
@@ -63,3 +63,26 @@ class Chat(SQLModel, table=True):
         back_populates="chats_as_user2",
         sa_relationship_kwargs={"foreign_keys": "Chat.user2_id"},
     )
+    messages: list["Message"] = Relationship(back_populates="chat")
+
+
+class Message(SQLModel, table=True):
+    __tablename__ = "messages"
+
+    id: int | None = Field(default=None, primary_key=True)
+    chat_id: int = Field(foreign_key="chats.id", index=True)
+    sender_id: int = Field(foreign_key="users.id", index=True)
+    content: str = Field(max_length=1000)
+    message_type: str = Field(default="text", max_length=20)
+    is_read: bool = Field(default=False)
+    created_at: datetime = Field(
+        sa_column_kwargs={"server_default": func.now()},
+        nullable=False,
+    )
+    updated_at: datetime = Field(
+        sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()},
+        nullable=False,
+    )
+
+    chat: Chat = Relationship(back_populates="messages")
+    sender: User = Relationship(back_populates="sent_messages")
