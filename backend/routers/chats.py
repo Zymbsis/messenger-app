@@ -52,7 +52,7 @@ async def create_chat(
         )
 
     chat_repo = ChatRepository(session)
-    new_chat = await chat_repo.create_new_chat(user1_id=u1, user2_id=u2)
+    new_chat = await chat_repo.create_new_chat(u1, u2)
 
     return ChatRead(
         id=new_chat.id,
@@ -74,7 +74,7 @@ async def get_chat(
     chat_id: int, current_user: CurrentUserDependency, session: SessionDependency
 ):
     repo = ChatRepository(session)
-    chat = await repo.get_chat_by_id(id=chat_id)
+    chat = await repo.get_chat_by_id(chat_id)
 
     if not chat or current_user.id not in [chat.user1_id, chat.user2_id]:
         raise HTTPException(

@@ -38,7 +38,7 @@ class MessageCreate(SQLModel):
 
 
 class MessageUpdate(MessageCreate):
-    pass
+    id: int
 
 
 class MessageRead(MessageCreate):

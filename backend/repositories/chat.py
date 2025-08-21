@@ -24,5 +24,13 @@ class ChatRepository:
 
         return result.all()
 
-    async def get_chat_by_id(self, id: int) -> Chat | None:
-        return await self.session.get(Chat, id)
+    async def get_chat_by_id(self, chat_id: int) -> Chat | None:
+        return await self.session.get(Chat, chat_id)
+
+    async def is_chat_member(self, chat_id: int, user_id: int) -> bool:
+        chat = await self.get_chat_by_id(chat_id)
+
+        if not chat:
+            return False
+
+        return user_id in [chat.user1_id, chat.user2_id]
