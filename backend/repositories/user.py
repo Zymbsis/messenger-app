@@ -5,7 +5,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 
 class UserRepository:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def get_user_by_email(self, email: str) -> User | None:
@@ -15,10 +15,7 @@ class UserRepository:
         return result.one_or_none()
 
     async def get_user_by_id(self, id: int) -> User | None:
-        statement = select(User).where(User.id == id)
-        result = await self.session.exec(statement)
-
-        return result.one_or_none()
+        return await self.session.get(User, id)
 
     async def get_all_users(self, current_user_id: int) -> list[User]:
         statement = select(User).where(User.id != current_user_id)

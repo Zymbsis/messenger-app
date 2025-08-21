@@ -4,7 +4,7 @@ from sqlmodel.ext.asyncio.session import AsyncSession
 
 
 class ChatRepository:
-    def __init__(self, session: AsyncSession):
+    def __init__(self, session: AsyncSession) -> None:
         self.session = session
 
     async def create_new_chat(self, user1_id: int, user2_id: int) -> Chat:
@@ -25,7 +25,4 @@ class ChatRepository:
         return result.all()
 
     async def get_chat_by_id(self, id: int) -> Chat | None:
-        statement = select(Chat).where(Chat.id == id)
-        result = await self.session.exec(statement)
-
-        return result.one_or_none()
+        return await self.session.get(Chat, id)
