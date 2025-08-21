@@ -2,7 +2,7 @@ from contextlib import asynccontextmanager
 
 from core.db import close_db, init_db
 from fastapi import FastAPI
-from routers import auth, users
+from routers import auth, chats, users
 
 
 @asynccontextmanager
@@ -16,3 +16,4 @@ app = FastAPI(lifespan=lifespan)
 
 app.include_router(auth.router)
 app.include_router(users.router)
+app.include_router(chats.router)

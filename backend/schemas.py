@@ -20,3 +20,14 @@ class UserRead(UserBase):
 class TokenPayload(BaseModel):
     sub: str | None = None
     exp: datetime | None = None
+
+
+class ChatCreate(SQLModel):
+    user2_id: int
+
+
+class ChatRead(ChatCreate):
+    id: int
+    user1_id: int
+    created_at: datetime
+    updated_at: datetime
