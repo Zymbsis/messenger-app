@@ -11,16 +11,19 @@ class UserRepository:
     async def get_user_by_email(self, email: str) -> User | None:
         statement = select(User).where(User.email == email)
         result = await self.session.exec(statement)
+
         return result.one_or_none()
 
     async def get_user_by_id(self, id: int) -> User | None:
         statement = select(User).where(User.id == id)
         result = await self.session.exec(statement)
+
         return result.one_or_none()
 
     async def get_all_users(self, current_user_id: int) -> list[User]:
         statement = select(User).where(User.id != current_user_id)
         result = await self.session.exec(statement)
+
         return result.all()
 
     async def create_user(self, email: str, password: str) -> User:
@@ -29,4 +32,5 @@ class UserRepository:
         self.session.add(user)
         await self.session.commit()
         await self.session.refresh(user)
+
         return user

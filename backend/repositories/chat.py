@@ -1,4 +1,5 @@
 from models import Chat
+from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 
@@ -14,3 +15,17 @@ class ChatRepository:
         await self.session.refresh(chat)
 
         return chat
+
+    async def get_chats_by_user_id(self, user_id: int) -> list[Chat]:
+        statement = select(Chat).where(
+            (Chat.user1_id == user_id) | (Chat.user2_id == user_id)
+        )
+        result = await self.session.exec(statement)
+
+        return result.all()
+
+    async def get_chat_by_id(self, id: int) -> Chat | None:
+        statement = select(Chat).where(Chat.id == id)
+        result = await self.session.exec(statement)
+
+        return result.one_or_none()
