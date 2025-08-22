@@ -1,4 +1,7 @@
+from fastapi import HTTPException, status
 from models import Message
+from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 
@@ -14,8 +17,13 @@ class MessageRepository:
 
         return message
 
-    async def update_message(self, msg_id: int, content: str):
+    async def update_message(self, msg_id: int, sender_id: int, content: str):
         message = await self.get_message_by_id(msg_id)
+        if sender_id != message.sender_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cannot edit message",
+            )
         message.content = content
         self.session.add(message)
         await self.session.commit()
@@ -26,9 +34,23 @@ class MessageRepository:
     async def get_message_by_id(self, msg_id: int) -> Message | None:
         return await self.session.get(Message, msg_id)
 
-    async def delete_message(self, id: int):
-        message = await self.get_message_by_id(id)
+    async def get_messages_by_chat_id(self, chat_id: int) -> list[Message]:
+        statement = (
+            select(Message)
+            .options(selectinload(Message.sender), selectinload(Message.chat))
+            .where(Message.chat_id == chat_id)
+            .order_by(Message.created_at.asc())
+        )
+        result = await self.session.exec(statement)
+        return result.all()
 
+    async def delete_message(self, msg_id: int, sender_id: int):
+        message = await self.get_message_by_id(msg_id)
+        if sender_id != message.sender_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="Cannot delete message",
+            )
         if message:
             await self.session.delete(message)
             await self.session.commit()
