@@ -1,5 +1,20 @@
+import { useActionState } from 'react';
+import AuthForm from '../components/AuthForm';
+import { FormTypeEnum } from '../components/enums';
+import { signInAction } from '../helpers/signInAction';
+
 const Login = () => {
-  return <div>Login Page</div>;
+  const [formState, formAction] = useActionState(signInAction, {
+    errors: null,
+  });
+
+  return (
+    <AuthForm
+      formState={formState}
+      action={formAction}
+      formType={FormTypeEnum.SIGNIN}
+    />
+  );
 };
 
 export default Login;
