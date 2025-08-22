@@ -1,7 +1,11 @@
-import { Fragment } from 'react/jsx-runtime';
+import { Outlet } from 'react-router';
 
-function App() {
-  return <Fragment />;
-}
+const App = () => {
+  return (
+    <main>
+      <Outlet />
+    </main>
+  );
+};
 
 export default App;
