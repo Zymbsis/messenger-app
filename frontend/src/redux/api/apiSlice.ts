@@ -31,10 +31,19 @@ const apiSlice = createApi({
         socket.close();
       },
     }),
+    sendMessage: builder.mutation<Message, { content: string; chatId: number }>(
+      {
+        query: ({ content, chatId }) => ({
+          url: `/messages/${chatId}`,
+          method: 'post',
+          data: { content },
+        }),
+      },
+    ),
   }),
 });
 
 export const apiSliceReducerPath = apiSlice.reducerPath;
 export const apiSliceReducer = apiSlice.reducer;
 export const apiSliceMiddleware = apiSlice.middleware;
-export const { useGetMessagesQuery } = apiSlice;
+export const { useGetMessagesQuery, useSendMessageMutation } = apiSlice;
