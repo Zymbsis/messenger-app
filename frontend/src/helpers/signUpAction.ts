@@ -1,11 +1,14 @@
+import type { FormState } from '../components/AuthForm.tsx';
+import { register } from '../redux/auth/operations.ts';
 import {
   isEmail,
   isNotEmpty,
   isEqualToOtherValue,
   hasMinLength,
 } from './validation.ts';
+import { store } from '../redux/store.ts';
 
-export const signUpAction = (_: unknown, formData: FormData) => {
+export const signUpAction = async (_: FormState, formData: FormData) => {
   const email = String(formData.get('email') || '');
   const password = String(formData.get('password') || '');
   const confirmPassword = String(formData.get('confirmPassword') || '');
@@ -25,9 +28,16 @@ export const signUpAction = (_: unknown, formData: FormData) => {
   }
 
   if (!errors.length) {
-    return {
-      errors: null,
-    };
+    try {
+      store.dispatch(
+        register({
+          email,
+          password,
+        }),
+      );
+    } catch {
+      return { errors: null };
+    }
   }
 
   return {

@@ -1,6 +1,9 @@
+import type { FormState } from '../components/AuthForm.tsx';
+import { login } from '../redux/auth/operations.ts';
 import { isEmail, isNotEmpty, hasMinLength } from './validation.ts';
+import { store } from '../redux/store.ts';
 
-export const signInAction = (_: unknown, formData: FormData) => {
+export const signInAction = (_: FormState, formData: FormData) => {
   const email = String(formData.get('email') || '');
   const password = String(formData.get('password') || '');
 
@@ -15,9 +18,11 @@ export const signInAction = (_: unknown, formData: FormData) => {
   }
 
   if (!errors.length) {
-    return {
-      errors: null,
-    };
+    try {
+      store.dispatch(login({ email, password }));
+    } catch {
+      return { errors: null };
+    }
   }
 
   return {

@@ -17,9 +17,10 @@ export type FormState = {
 type Props = ComponentPropsWithRef<'form'> & {
   formType: FormTypeEnum;
   formState: FormState;
+  isPending: boolean;
 };
 
-const AuthForm = ({ formType, formState, ...props }: Props) => {
+const AuthForm = ({ formType, formState, isPending, ...props }: Props) => {
   return (
     <div className='flex justify-center items-center flex-col xs:px-8 h-full px-4 sm:px-12 md:px-24 lg:px-0'>
       <form
@@ -50,7 +51,9 @@ const AuthForm = ({ formType, formState, ...props }: Props) => {
             <FormValidationErrors errors={formState.errors} />
           )}
         </div>
-        <button className='border rounded-lg h-12 w-1/2 self-end bg-black/90 text-white text-xl font-medium'>
+        <button
+          disabled={isPending}
+          className='border rounded-lg h-12 w-1/2 self-center bg-black/90 text-white text-xl font-medium'>
           {formType}
         </button>
       </form>

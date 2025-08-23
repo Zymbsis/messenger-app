@@ -1,7 +1,10 @@
 import { Link } from 'react-router';
+import { useAppSelector } from '../redux/hooks';
+import { selectIsAuthenticated } from '../redux/auth/selectors';
 
 const Home = () => {
-  const isAuthenticated = false;
+  const isAuthenticated = useAppSelector(selectIsAuthenticated);
+
   return (
     <>
       <div>Welcome to the messenger app</div>

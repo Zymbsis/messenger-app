@@ -4,15 +4,16 @@ import { FormTypeEnum } from '../components/enums';
 import { signInAction } from '../helpers/signInAction';
 
 const Login = () => {
-  const [formState, formAction] = useActionState(signInAction, {
+  const [formState, formAction, pending] = useActionState(signInAction, {
     errors: null,
   });
 
   return (
     <AuthForm
-      formState={formState}
-      action={formAction}
       formType={FormTypeEnum.SIGNIN}
+      action={formAction}
+      formState={formState}
+      isPending={pending}
     />
   );
 };
