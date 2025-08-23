@@ -12,10 +12,12 @@ import {
 
 import { authPersistConfig, authReducer } from './auth/slice';
 import { usersReducer } from './users/slice';
+import { chatsReducer } from './chats/slice';
 
 const rootReducer = {
-  users: usersReducer,
   auth: persistReducer(authPersistConfig, authReducer),
+  users: usersReducer,
+  chats: chatsReducer,
 };
 
 export const store = configureStore({

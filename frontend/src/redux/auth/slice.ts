@@ -10,7 +10,7 @@ const initialState: AuthState = { isAuthenticated: false };
 
 const auth = createSlice({
   name: 'auth',
-  initialState: initialState,
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder

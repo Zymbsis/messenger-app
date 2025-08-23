@@ -8,7 +8,7 @@ const initialState: UsersState = { currentUser: undefined, usersList: [] };
 
 const users = createSlice({
   name: 'users',
-  initialState: initialState,
+  initialState,
   reducers: {},
   extraReducers: (builder) => {
     builder
