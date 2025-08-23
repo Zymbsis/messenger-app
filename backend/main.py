@@ -3,7 +3,7 @@ from contextlib import asynccontextmanager
 from core.db import close_db, init_db
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import auth, chats, users, websockets
+from routers import auth, chats, messages, users, websockets
 
 
 @asynccontextmanager
@@ -28,4 +28,5 @@ app.add_middleware(
 app.include_router(auth.router)
 app.include_router(users.router)
 app.include_router(chats.router)
+app.include_router(messages.router)
 app.include_router(websockets.router)

@@ -45,5 +45,7 @@ class MessageRead(MessageCreate):
     id: int
     chat_id: int
     sender_id: int
+    message_type: str = "text"
+    is_read: bool = False
     created_at: datetime
     updated_at: datetime

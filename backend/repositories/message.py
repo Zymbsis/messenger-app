@@ -1,7 +1,6 @@
 from fastapi import HTTPException, status
 from models import Message
 from sqlalchemy import select
-from sqlalchemy.orm import selectinload
 from sqlmodel.ext.asyncio.session import AsyncSession
 
 
@@ -37,12 +36,11 @@ class MessageRepository:
     async def get_messages_by_chat_id(self, chat_id: int) -> list[Message]:
         statement = (
             select(Message)
-            .options(selectinload(Message.sender), selectinload(Message.chat))
             .where(Message.chat_id == chat_id)
             .order_by(Message.created_at.asc())
         )
         result = await self.session.exec(statement)
-        return result.all()
+        return result.scalars().all()
 
     async def delete_message(self, msg_id: int, sender_id: int):
         message = await self.get_message_by_id(msg_id)
