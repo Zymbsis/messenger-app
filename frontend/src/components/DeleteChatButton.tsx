@@ -9,7 +9,8 @@ const DeleteChatButton = ({ chatId }: { chatId: number }) => {
     <button
       onClick={() => dispatch(deleteChat(chatId))}
       className='h-full w-11 py-4 pr-3 pl-1'
-      type='button'>
+      type='button'
+      title='Delete chat'>
       <MdDeleteOutline className='w-full h-full' />
     </button>
   );

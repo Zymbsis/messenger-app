@@ -2,7 +2,7 @@ import type { FormEvent } from 'react';
 import { useSendMessageMutation } from '../redux/api/apiSlice';
 import { IoIosSend } from 'react-icons/io';
 
-type Props = { chatId: string };
+type Props = { chatId: number };
 
 const SendMessageForm = ({ chatId }: Props) => {
   const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();

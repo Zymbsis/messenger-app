@@ -2,13 +2,23 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from './axiosBaseQuery';
 import type { Message } from '../messages/slice';
 
+type EventData =
+  | {
+      type: 'new_message';
+      payload: Message;
+    }
+  | {
+      type: 'delete_message';
+      payload: { id: number };
+    };
+
 const WEBSOCKET_URL = 'ws://localhost:8000/ws';
 
 const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
-    getMessages: builder.query<Message[], string>({
+    getMessages: builder.query<Message[], number>({
       query: (chatId) => ({ url: `/messages/${chatId}` }),
       transformResponse: (response: Message[]) => response.toReversed(),
       onCacheEntryAdded: async (
@@ -19,10 +29,20 @@ const apiSlice = createApi({
         try {
           await cacheDataLoaded;
           socket.onmessage = (event) => {
-            const message = JSON.parse(event.data);
-            updateCachedData((draft) => {
-              return [message, ...draft];
-            });
+            const eventData: EventData = JSON.parse(event.data);
+
+            if (eventData.type === 'new_message') {
+              const message = eventData.payload;
+              updateCachedData((draft) => {
+                return [message, ...draft];
+              });
+            }
+            if (eventData.type === 'delete_message') {
+              const { id } = eventData.payload;
+              updateCachedData((draft) =>
+                draft.filter((message) => message.id !== id),
+              );
+            }
           };
         } catch (error) {
           console.error(error);
@@ -31,7 +51,7 @@ const apiSlice = createApi({
         socket.close();
       },
     }),
-    sendMessage: builder.mutation<Message, { content: string; chatId: string }>(
+    sendMessage: builder.mutation<Message, { content: string; chatId: number }>(
       {
         query: ({ content, chatId }) => ({
           url: `/messages/${chatId}`,
@@ -40,10 +60,20 @@ const apiSlice = createApi({
         }),
       },
     ),
+    deleteMessage: builder.mutation<void, number>({
+      query: (chatId) => ({
+        url: `/messages/${chatId}`,
+        method: 'delete',
+      }),
+    }),
   }),
 });
 
 export const apiSliceReducerPath = apiSlice.reducerPath;
 export const apiSliceReducer = apiSlice.reducer;
 export const apiSliceMiddleware = apiSlice.middleware;
-export const { useGetMessagesQuery, useSendMessageMutation } = apiSlice;
+export const {
+  useGetMessagesQuery,
+  useSendMessageMutation,
+  useDeleteMessageMutation,
+} = apiSlice;
