@@ -14,12 +14,18 @@ import { authPersistConfig, authReducer } from './auth/slice';
 import { usersReducer } from './users/slice';
 import { chatsReducer } from './chats/slice';
 import { messagesReducer } from './messages/slice';
+import {
+  apiSliceMiddleware,
+  apiSliceReducer,
+  apiSliceReducerPath,
+} from './api/apiSlice';
 
 const rootReducer = {
   auth: persistReducer(authPersistConfig, authReducer),
   users: usersReducer,
   chats: chatsReducer,
   messages: messagesReducer,
+  [apiSliceReducerPath]: apiSliceReducer,
 };
 
 export const store = configureStore({
@@ -29,7 +35,7 @@ export const store = configureStore({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    }),
+    }).concat(apiSliceMiddleware),
 });
 
 export type RootState = ReturnType<typeof store.getState>;
