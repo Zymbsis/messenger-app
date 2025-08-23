@@ -11,9 +11,10 @@ export const register = createAsyncThunk<
   void,
   AuthBody,
   { rejectValue: string }
->('auth/register', async (body, { rejectWithValue }) => {
+>('auth/register', async (body, { rejectWithValue, dispatch }) => {
   try {
     await axiosInstance.post('auth/register', body);
+    await dispatch(login(body));
   } catch (error) {
     if (error instanceof AxiosError)
       return rejectWithValue(error.response?.data?.message || error.message);

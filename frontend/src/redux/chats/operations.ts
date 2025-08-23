@@ -22,9 +22,9 @@ export const createNewChat = createAsyncThunk<
   Chat,
   number,
   { rejectValue: string }
->('chats/createNewChat', async (user2Id, { rejectWithValue }) => {
+>('chats/createNewChat', async (user2_id, { rejectWithValue }) => {
   try {
-    const { data } = await axiosInstance.post('/chats', { user2Id });
+    const { data } = await axiosInstance.post('/chats', { user2_id });
     return data;
   } catch (error) {
     if (error instanceof AxiosError)
