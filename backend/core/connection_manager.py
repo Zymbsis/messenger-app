@@ -1,3 +1,5 @@
+import asyncio
+
 from fastapi import WebSocket
 
 
@@ -21,5 +23,10 @@ class ConnectionManager:
 
     async def broadcast(self, message: str, chat_id: int):
         if chat_id in self.active_connections:
-            for connection in self.active_connections[chat_id]:
-                await connection.send_text(message)
+            await asyncio.gather(
+                *[
+                    connection.send_text(message)
+                    for connection in self.active_connections[chat_id]
+                ],
+                return_exceptions=True,
+            )
