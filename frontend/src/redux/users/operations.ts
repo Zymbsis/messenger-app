@@ -1,11 +1,7 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import type { UserType } from './slice';
-
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000/users',
-  withCredentials: true,
-});
+import { axiosInstance } from '../axios-instance';
 
 export const getCurrentUser = createAsyncThunk<
   UserType,
@@ -13,7 +9,7 @@ export const getCurrentUser = createAsyncThunk<
   { rejectValue: string }
 >('users/getCurrentUser', async (_, { rejectWithValue }) => {
   try {
-    const { data } = await axiosInstance('/current-user');
+    const { data } = await axiosInstance('users/current-user');
     return data;
   } catch (error) {
     if (error instanceof AxiosError)
@@ -28,7 +24,7 @@ export const getAllUsers = createAsyncThunk<
   { rejectValue: string }
 >('users/getAllUsers', async (_, { rejectWithValue }) => {
   try {
-    const { data } = await axiosInstance('/all-users');
+    const { data } = await axiosInstance('users/all-users');
     return data;
   } catch (error) {
     if (error instanceof AxiosError)

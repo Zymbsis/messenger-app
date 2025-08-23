@@ -1,10 +1,6 @@
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
-
-const axiosInstance = axios.create({
-  baseURL: 'http://localhost:8000/auth',
-  withCredentials: true,
-});
+import { axiosInstance } from '../axios-instance';
 
 type AuthBody = {
   email: string;
@@ -17,7 +13,7 @@ export const register = createAsyncThunk<
   { rejectValue: string }
 >('auth/register', async (body, { rejectWithValue }) => {
   try {
-    await axiosInstance.post('/register', body);
+    await axiosInstance.post('auth/register', body);
   } catch (error) {
     if (error instanceof AxiosError)
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -29,7 +25,7 @@ export const login = createAsyncThunk<void, AuthBody, { rejectValue: string }>(
   'auth/login',
   async (body, { rejectWithValue }) => {
     try {
-      await axiosInstance.post('/login', body);
+      await axiosInstance.post('auth/login', body);
     } catch (error) {
       if (error instanceof AxiosError)
         return rejectWithValue(error.response?.data?.message || error.message);
@@ -44,7 +40,7 @@ export const refresh = createAsyncThunk<
   { rejectValue: string }
 >('auth/refresh', async (_, { rejectWithValue }) => {
   try {
-    await axiosInstance.post('/refresh');
+    await axiosInstance.post('auth/refresh');
   } catch (error) {
     if (error instanceof AxiosError)
       return rejectWithValue(error.response?.data?.message || error.message);
@@ -58,7 +54,7 @@ export const logout = createAsyncThunk<
   { rejectValue: string }
 >('auth/logout', async (_, { rejectWithValue }) => {
   try {
-    await axiosInstance.post('/logout');
+    await axiosInstance.post('auth/logout');
   } catch (error) {
     if (error instanceof AxiosError)
       return rejectWithValue(error.response?.data?.message || error.message);
