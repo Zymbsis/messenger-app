@@ -4,9 +4,11 @@ import { selectCurrentUser } from '../redux/users/selectors';
 import { useGetMessagesQuery } from '../redux/api/apiSlice';
 import SendMessageForm from '../components/SendMessageForm';
 import clsx from 'clsx';
+import ChatMessage from '../components/ChatMessage';
 
 const ActiveChat = () => {
-  const { chatId } = useParams();
+  const params = useParams();
+  const chatId = Number(params.chatId);
   const currentUser = useAppSelector(selectCurrentUser);
   const currentUserId = currentUser?.id;
 
@@ -14,7 +16,7 @@ const ActiveChat = () => {
     data: messages = [],
     isLoading,
     isError,
-  } = useGetMessagesQuery(chatId ?? '', {
+  } = useGetMessagesQuery(chatId, {
     skip: !chatId,
   });
 
@@ -33,26 +35,21 @@ const ActiveChat = () => {
         )}
         {!!messages.length && (
           <ul className='flex gap-4 pr-4 h-full flex-col-reverse overflow-y-auto'>
-            {messages.map((message) => (
-              <li
-                className={clsx(
-                  'max-w-2/3 border flex justify-between gap-3 p-2 rounded-lg bg-black/60 text-white',
-                  {
-                    'self-end': currentUserId === message.sender_id,
-                  },
-                )}
-                key={message.id}>
-                <span>{message.content}</span>
-                <span>
-                  <span className='block'>
-                    {message.created_at.split('T')[0]}
-                  </span>
-                  <span className='block'>
-                    {message.created_at.split('T')[1]}
-                  </span>
-                </span>
-              </li>
-            ))}
+            {messages.map((message) => {
+              const isOwnMessage = currentUserId === message.sender_id;
+              return (
+                <li
+                  className={clsx(
+                    'w-2/3 border flex flex-col gap-3 p-2 rounded-lg bg-black/60 text-white',
+                    {
+                      'self-end': isOwnMessage,
+                    },
+                  )}
+                  key={message.id}>
+                  <ChatMessage message={message} isOwnMessage={isOwnMessage} />
+                </li>
+              );
+            })}
           </ul>
         )}
       </div>
