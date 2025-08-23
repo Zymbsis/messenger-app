@@ -4,7 +4,7 @@ import Home from './pages/Home';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Chats from './pages/Chats';
-import Chat from './pages/Chat';
+import ActiveChat from './pages/ActiveChat';
 import RestrictedRoute from './components/RestrictedRoute';
 import ProtectedRoute from './components/ProtectedRoute';
 
@@ -27,7 +27,7 @@ export default createBrowserRouter([
           {
             path: 'chats',
             Component: Chats,
-            children: [{ path: ':chat_id', Component: Chat }],
+            children: [{ path: ':chat_id', Component: ActiveChat }],
           },
         ],
       },
