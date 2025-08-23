@@ -18,7 +18,8 @@ button {
 @theme {
   --breakpoint-xs: 480px;
 }
-input {
+input,
+select {
   outline: none;
 }
 /* .custom-scrollbar::-webkit-scrollbar {

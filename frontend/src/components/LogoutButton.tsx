@@ -8,7 +8,7 @@ const LogoutButton = () => {
 
   return (
     <button
-      className='size-14 p-3'
+      className='h-full w-14 px-3'
       type='button'
       title='Logout'
       onClick={handleLogout}>

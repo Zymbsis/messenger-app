@@ -22,7 +22,7 @@ type Props = ComponentPropsWithRef<'form'> & {
 
 const AuthForm = ({ formType, formState, isPending, ...props }: Props) => {
   return (
-    <div className='flex justify-center items-center flex-col xs:px-8 h-full px-4 sm:px-12 md:px-24 lg:px-0'>
+    <main className='flex justify-center items-center flex-col xs:px-8 h-full px-4 sm:px-12 md:px-24 lg:px-0'>
       <form
         className='flex flex-col w-full lg:w-1/2 gap-4 xl:w-1/3  mb-8'
         {...props}>
@@ -58,7 +58,7 @@ const AuthForm = ({ formType, formState, isPending, ...props }: Props) => {
         </button>
       </form>
       <AuthSwitchMessage formType={formType} />
-    </div>
+    </main>
   );
 };
 

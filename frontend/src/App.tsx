@@ -1,11 +1,7 @@
 import { Outlet } from 'react-router';
 
 const App = () => {
-  return (
-    <main className='h-full'>
-      <Outlet />
-    </main>
-  );
+  return <Outlet />;
 };
 
 export default App;

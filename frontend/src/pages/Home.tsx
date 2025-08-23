@@ -6,7 +6,7 @@ const Home = () => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   return (
-    <>
+    <main>
       <div>Welcome to the messenger app</div>
       {!isAuthenticated && (
         <ul className='flex gap-5'>
@@ -18,7 +18,7 @@ const Home = () => {
           </li>
         </ul>
       )}
-    </>
+    </main>
   );
 };
 
