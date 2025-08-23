@@ -8,7 +8,7 @@ const apiSlice = createApi({
   reducerPath: 'api',
   baseQuery: axiosBaseQuery(),
   endpoints: (builder) => ({
-    getMessages: builder.query<Message[], number>({
+    getMessages: builder.query<Message[], string>({
       query: (chatId) => ({ url: `/messages/${chatId}` }),
       transformResponse: (response: Message[]) => response.toReversed(),
       onCacheEntryAdded: async (
@@ -31,7 +31,7 @@ const apiSlice = createApi({
         socket.close();
       },
     }),
-    sendMessage: builder.mutation<Message, { content: string; chatId: number }>(
+    sendMessage: builder.mutation<Message, { content: string; chatId: string }>(
       {
         query: ({ content, chatId }) => ({
           url: `/messages/${chatId}`,

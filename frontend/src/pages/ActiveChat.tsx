@@ -2,7 +2,7 @@ import { useParams } from 'react-router';
 import { useAppSelector } from '../redux/hooks';
 import { selectCurrentUser } from '../redux/users/selectors';
 import { useGetMessagesQuery } from '../redux/api/apiSlice';
-import { IoIosSend } from 'react-icons/io';
+import SendMessageForm from '../components/SendMessageForm';
 import clsx from 'clsx';
 
 const ActiveChat = () => {
@@ -14,7 +14,7 @@ const ActiveChat = () => {
     data: messages = [],
     isLoading,
     isError,
-  } = useGetMessagesQuery(Number(chatId), {
+  } = useGetMessagesQuery(chatId ?? '', {
     skip: !chatId,
   });
 
@@ -56,14 +56,7 @@ const ActiveChat = () => {
           </ul>
         )}
       </div>
-      <form
-        onSubmit={(e) => e.preventDefault()}
-        className='h-1/6 border mr-4 rounded-lg relative'>
-        <textarea className='w-full h-full p-2' name='message'></textarea>
-        <button className='absolute bottom-0 right-0 size-12 p-2'>
-          <IoIosSend className='w-full h-full' />
-        </button>
-      </form>
+      {chatId && <SendMessageForm chatId={chatId} />}
     </div>
   );
 };
