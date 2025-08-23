@@ -2,6 +2,7 @@ import { MdDeleteOutline, MdModeEditOutline } from 'react-icons/md';
 import { useDeleteMessageMutation } from '../redux/api/apiSlice';
 import type { Message } from '../redux/messages/slice';
 import { formattedDateTimeEn } from '../helpers/formatting';
+import { CiEdit } from 'react-icons/ci';
 
 type Props = {
   message: Message;
@@ -20,9 +21,11 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
     <>
       <span>{message.content}</span>
       <div className='flex flex-nowrap gap-4 items-center justify-end'>
-        <span className='block italic text-sm'>
+        <span className='gap-2 italic text-sm inline-flex shrink-0 md:whitespace-nowrap'>
+          {isMessageEdited && <CiEdit style={{ height: 20 }} title='Edited' />}{' '}
           {formattedDateTimeEn(updatedAt)}
         </span>
+
         {isOwnMessage && (
           <div className='flex h-full gap-1.5'>
             <button
@@ -30,7 +33,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
               className='size-5'
               type='button'
               title='Edit message'>
-              <MdModeEditOutline className='w-full h-full' />
+              <MdModeEditOutline />
             </button>
             <button
               onClick={handleDeleteMessage}
