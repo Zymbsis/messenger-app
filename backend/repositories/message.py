@@ -46,12 +46,12 @@ class MessageRepository:
 
     async def delete_message(self, msg_id: int, sender_id: int):
         message = await self.get_message_by_id(msg_id)
-        if sender_id != message.sender_id:
-            raise HTTPException(
-                status_code=status.HTTP_403_FORBIDDEN,
-                detail="Cannot delete message",
-            )
         if message:
+            if sender_id != message.sender_id:
+                raise HTTPException(
+                    status_code=status.HTTP_403_FORBIDDEN,
+                    detail="Cannot delete message",
+                )
             await self.session.delete(message)
             await self.session.commit()
 

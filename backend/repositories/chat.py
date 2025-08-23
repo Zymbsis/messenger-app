@@ -1,3 +1,4 @@
+from fastapi import HTTPException, status
 from models import Chat
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession
@@ -34,3 +35,21 @@ class ChatRepository:
             return False
 
         return user_id in [chat.user1_id, chat.user2_id]
+
+    async def get_chat_by_user_id(self, chat_id: int, user_id: int) -> Chat | None:
+        statement = (
+            select(Chat)
+            .where(Chat.id == chat_id)
+            .where((Chat.user1_id == user_id) | (Chat.user2_id == user_id))
+        )
+        result = await self.session.exec(statement)
+        return result.one_or_none()
+
+    async def delete_chat(self, chat_id: int, user_id: int) -> None:
+        chat = await self.get_chat_by_user_id(chat_id, user_id)
+
+        if chat:
+            await self.session.delete(chat)
+            await self.session.commit()
+
+        return None

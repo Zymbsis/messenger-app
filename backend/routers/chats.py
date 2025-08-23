@@ -82,3 +82,11 @@ async def get_chat(
         )
 
     return chat
+
+
+@router.delete("/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
+async def delete_chat(
+    chat_id: int, current_user: CurrentUserDependency, session: SessionDependency
+):
+    repo = ChatRepository(session)
+    await repo.delete_chat(chat_id, current_user.id)
