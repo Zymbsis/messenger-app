@@ -11,11 +11,15 @@ import {
 } from 'redux-persist';
 
 import { authPersistConfig, authReducer } from './auth/slice';
+import { usersReducer } from './users/slice';
+
+const rootReducer = {
+  users: usersReducer,
+  auth: persistReducer(authPersistConfig, authReducer),
+};
 
 export const store = configureStore({
-  reducer: {
-    auth: persistReducer(authPersistConfig, authReducer),
-  },
+  reducer: rootReducer,
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
       serializableCheck: {
