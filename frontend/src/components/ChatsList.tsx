@@ -22,7 +22,7 @@ const ChatsList = () => {
     };
   });
   return (
-    <ul className='w-1/3 border-r h-full overflow-y-auto'>
+    <ul className='w-1/3 border-r h-full overflow-y-auto custom-scrollbar'>
       {chatsWithContacts.map((chat) => (
         <li
           className='h-16 border-b flex justify-between items-center pl-3 gap-2'

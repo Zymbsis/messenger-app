@@ -34,7 +34,7 @@ const ActiveChat = () => {
           </p>
         )}
         {!!messages.length && (
-          <ul className='flex gap-4 pr-4 h-full flex-col-reverse overflow-y-auto'>
+          <ul className='flex gap-4 pr-4 h-full flex-col-reverse overflow-y-auto custom-scrollbar'>
             {messages.map((message) => {
               const isOwnMessage = currentUserId === message.sender_id;
               return (
