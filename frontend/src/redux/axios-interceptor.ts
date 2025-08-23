@@ -19,7 +19,7 @@ let failedQueue: Array<{
 
 let isRefreshing = false;
 
-const processQueue = (error: AxiosError | null) => {
+const processQueue = (error?: AxiosError) => {
   failedQueue.forEach(({ resolve, reject, config }) => {
     if (error) {
       reject(error);
@@ -42,15 +42,13 @@ axiosInstance.interceptors.request.use(
 
 axiosInstance.interceptors.response.use(
   (response: AxiosResponse) => response,
-  async (error: AxiosError) => {
+  async (error: AxiosError<{ detail?: string }>) => {
     const originalRequest = error.config as ExtendedAxiosRequestConfig;
     if (
       ((error.response?.status === 403 &&
-        (error.response?.data as { detail?: string })?.detail ===
-          'Not authenticated') ||
+        error.response.data?.detail === 'Not authenticated') ||
         (error.response?.status === 401 &&
-          (error.response?.data as { detail?: string })?.detail ===
-            'Invalid token')) &&
+          error.response.data?.detail === 'Invalid token')) &&
       originalRequest &&
       !originalRequest._retry
     ) {
@@ -65,7 +63,7 @@ axiosInstance.interceptors.response.use(
 
       try {
         await store.dispatch(refresh()).unwrap();
-        processQueue(null);
+        processQueue();
 
         return axiosInstance(originalRequest);
       } catch (refreshError) {
