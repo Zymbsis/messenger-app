@@ -42,15 +42,8 @@ class MessageRepository:
         result = await self.session.exec(statement)
         return result.scalars().all()
 
-    async def delete_message(self, msg_id: int, sender_id: int):
-        message = await self.get_message_by_id(msg_id)
-        if message:
-            if sender_id != message.sender_id:
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Cannot delete message",
-                )
-            await self.session.delete(message)
-            await self.session.commit()
+    async def delete_message(self, message: Message):
+        await self.session.delete(message)
+        await self.session.commit()
 
         return message
