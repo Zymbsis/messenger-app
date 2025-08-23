@@ -1,10 +1,10 @@
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import type { UserType } from './slice';
+import type { User } from './slice';
 import { axiosInstance } from '../axios-instance';
 
 export const getCurrentUser = createAsyncThunk<
-  UserType,
+  User,
   undefined,
   { rejectValue: string }
 >('users/getCurrentUser', async (_, { rejectWithValue }) => {
@@ -19,7 +19,7 @@ export const getCurrentUser = createAsyncThunk<
 });
 
 export const getAllUsers = createAsyncThunk<
-  UserType[],
+  User[],
   undefined,
   { rejectValue: string }
 >('users/getAllUsers', async (_, { rejectWithValue }) => {

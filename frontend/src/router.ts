@@ -27,7 +27,7 @@ export default createBrowserRouter([
           {
             path: 'chats',
             Component: Chats,
-            children: [{ path: ':chat_id', Component: ActiveChat }],
+            children: [{ path: ':chatId', Component: ActiveChat }],
           },
         ],
       },

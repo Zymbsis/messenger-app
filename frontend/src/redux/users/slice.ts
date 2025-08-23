@@ -1,8 +1,8 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 import { getAllUsers, getCurrentUser } from './operations';
 
-export type UserType = { id: number; email: string; created_at: string };
-type UsersState = { currentUser?: UserType; usersList: UserType[] };
+export type User = { id: number; email: string; created_at: string };
+type UsersState = { currentUser?: User; usersList: User[] };
 
 const initialState: UsersState = { currentUser: undefined, usersList: [] };
 
@@ -14,13 +14,13 @@ const users = createSlice({
     builder
       .addCase(
         getCurrentUser.fulfilled,
-        (state, action: PayloadAction<UserType>) => {
+        (state, action: PayloadAction<User>) => {
           state.currentUser = action.payload;
         },
       )
       .addCase(
         getAllUsers.fulfilled,
-        (state, action: PayloadAction<UserType[]>) => {
+        (state, action: PayloadAction<User[]>) => {
           state.usersList = action.payload;
         },
       );

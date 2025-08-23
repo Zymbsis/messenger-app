@@ -20,7 +20,6 @@ const Chats = () => {
       <ChatsHeader />
       <main className='flex h-[calc(100%-56px)]'>
         <ChatsList />
-        <ul></ul>
         <Outlet />
       </main>
     </>

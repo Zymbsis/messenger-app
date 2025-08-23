@@ -29,7 +29,7 @@ const ChatsList = () => {
           key={chat.id}>
           <NavLink
             className='truncate h-full w-full flex items-center'
-            to={`/chats/${chat.contactId}`}>
+            to={`/chats/${chat.id}`}>
             {chat.contactEmail}
           </NavLink>{' '}
           <DeleteChatButton chatId={chat.id} />

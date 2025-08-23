@@ -13,11 +13,13 @@ import {
 import { authPersistConfig, authReducer } from './auth/slice';
 import { usersReducer } from './users/slice';
 import { chatsReducer } from './chats/slice';
+import { messagesReducer } from './messages/slice';
 
 const rootReducer = {
   auth: persistReducer(authPersistConfig, authReducer),
   users: usersReducer,
   chats: chatsReducer,
+  messages: messagesReducer,
 };
 
 export const store = configureStore({

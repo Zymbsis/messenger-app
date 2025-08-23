@@ -22,9 +22,9 @@ export const createNewChat = createAsyncThunk<
   Chat,
   number,
   { rejectValue: string }
->('chats/createNewChat', async (user2_id, { rejectWithValue }) => {
+>('chats/createNewChat', async (user2Id, { rejectWithValue }) => {
   try {
-    const { data } = await axiosInstance.post('/chats', { user2_id });
+    const { data } = await axiosInstance.post('/chats', { user2Id });
     return data;
   } catch (error) {
     if (error instanceof AxiosError)
@@ -37,10 +37,10 @@ export const deleteChat = createAsyncThunk<
   number,
   number,
   { rejectValue: string }
->('chats/deleteChat', async (chat_id, { rejectWithValue }) => {
+>('chats/deleteChat', async (chatId, { rejectWithValue }) => {
   try {
-    await axiosInstance.delete(`/chats/${chat_id}`);
-    return chat_id;
+    await axiosInstance.delete(`/chats/${chatId}`);
+    return chatId;
   } catch (error) {
     if (error instanceof AxiosError)
       return rejectWithValue(error.response?.data?.message || error.message);

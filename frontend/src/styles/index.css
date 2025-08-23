@@ -19,8 +19,12 @@ button {
   --breakpoint-xs: 480px;
 }
 input,
-select {
+select,
+textarea {
   outline: none;
+}
+textarea {
+  resize: none;
 }
 /* .custom-scrollbar::-webkit-scrollbar {
   @apply h-1 w-1;
