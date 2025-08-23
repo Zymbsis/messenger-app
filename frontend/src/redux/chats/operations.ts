@@ -32,3 +32,18 @@ export const createNewChat = createAsyncThunk<
     return rejectWithValue('Unknown error occurred');
   }
 });
+
+export const deleteChat = createAsyncThunk<
+  number,
+  number,
+  { rejectValue: string }
+>('chats/deleteChat', async (chat_id, { rejectWithValue }) => {
+  try {
+    await axiosInstance.delete(`/chats/${chat_id}`);
+    return chat_id;
+  } catch (error) {
+    if (error instanceof AxiosError)
+      return rejectWithValue(error.response?.data?.message || error.message);
+    return rejectWithValue('Unknown error occurred');
+  }
+});

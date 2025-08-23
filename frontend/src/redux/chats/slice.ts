@@ -1,5 +1,5 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
-import { createNewChat, getAllChats } from './operations';
+import { createNewChat, deleteChat, getAllChats } from './operations';
 
 export type Chat = {
   id: number;
@@ -33,7 +33,10 @@ const chats = createSlice({
           if (existingChat) return;
           state.chats.push(action.payload);
         },
-      ),
+      )
+      .addCase(deleteChat.fulfilled, (state, action: PayloadAction<number>) => {
+        state.chats = state.chats.filter((chat) => chat.id !== action.payload);
+      }),
 });
 
 export const chatsReducer = chats.reducer;
