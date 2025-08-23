@@ -12,7 +12,7 @@ from core.auth.security import verify_password
 from core.db import SessionDependency
 from fastapi import APIRouter, Cookie, HTTPException, Response, status
 from repositories.user import UserRepository
-from schemas import UserCreate, UserRead
+from schemas import UserCreate
 
 router = APIRouter(
     prefix="/auth",
