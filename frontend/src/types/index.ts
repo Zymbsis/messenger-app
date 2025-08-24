@@ -8,3 +8,8 @@ export type Message = {
   created_at: string;
   updated_at: string;
 };
+
+export type EventData =
+  | { type: 'new_message'; payload: Message }
+  | { type: 'delete_message'; payload: { id: number } }
+  | { type: 'edit_message'; payload: Message };

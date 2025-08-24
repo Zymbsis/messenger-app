@@ -13,7 +13,6 @@ import {
 import { authPersistConfig, authReducer } from './auth/slice';
 import { usersReducer } from './users/slice';
 import { chatsReducer } from './chats/slice';
-import { messagesReducer } from './messages/slice';
 import {
   apiSliceMiddleware,
   apiSliceReducer,
@@ -24,7 +23,6 @@ const rootReducer = {
   auth: persistReducer(authPersistConfig, authReducer),
   users: usersReducer,
   chats: chatsReducer,
-  messages: messagesReducer,
   [apiSliceReducerPath]: apiSliceReducer,
 };
 

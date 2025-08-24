@@ -1,7 +1,6 @@
 import { toast } from 'sonner';
 
-import type { Message } from '../redux/messages/slice';
-import type { EventData } from '../redux/api/apiSlice';
+import type { Message, EventData } from '../types';
 
 type UpdateMessagesFn = (updateRecipe: (draft: Message[]) => void) => void;
 

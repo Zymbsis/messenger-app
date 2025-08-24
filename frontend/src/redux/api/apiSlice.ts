@@ -5,20 +5,6 @@ import { WebSocketService } from '../../services/websocketService';
 
 import type { Message } from '../../types';
 
-export type EventData =
-  | {
-      type: 'new_message';
-      payload: Message;
-    }
-  | {
-      type: 'delete_message';
-      payload: { id: number };
-    }
-  | {
-      type: 'edit_message';
-      payload: Message;
-    };
-
 const WEBSOCKET_URL = 'ws://localhost:8000/ws';
 
 const apiSlice = createApi({
@@ -32,15 +18,14 @@ const apiSlice = createApi({
         chatId,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
       ) => {
-        const url = `${WEBSOCKET_URL}/${chatId}`;
-        const socket = new WebSocketService(url, updateCachedData);
+        const socket = new WebSocketService(
+          `${WEBSOCKET_URL}/${chatId}`,
+          updateCachedData,
+        );
 
-        try {
-          await cacheDataLoaded;
-        } catch (error) {
-          console.error(error);
-        }
+        await cacheDataLoaded;
         await cacheEntryRemoved;
+
         socket.close();
       },
     }),
