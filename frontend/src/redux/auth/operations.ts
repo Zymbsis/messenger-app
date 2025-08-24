@@ -8,6 +8,7 @@ import type { AuthBody } from '../../types/types';
 
 const toastMessages = {
   register: {
+    id: 'auth',
     loading: 'Registering...',
     success: 'Registered successfully',
     error: (e: AxiosError<{ detail: string }>) =>
@@ -15,6 +16,7 @@ const toastMessages = {
       'Error occurred while registering, please try again.',
   },
   login: {
+    id: 'auth',
     loading: 'Logging in...',
     success: 'Logged in successfully',
     error: (e: AxiosError<{ detail: string }>) =>
@@ -22,11 +24,9 @@ const toastMessages = {
       'Error occurred while logging in, please check your credentials.',
   },
   refresh: {
+    id: 'refresh',
     loading: 'Refreshing...',
     success: 'Refreshed successfully',
-    error: (e: AxiosError<{ detail: string }>) =>
-      e.response?.data?.detail ||
-      'Error occurred while refreshing session, please login again.',
   },
   logout: {
     loading: 'Logging out...',
