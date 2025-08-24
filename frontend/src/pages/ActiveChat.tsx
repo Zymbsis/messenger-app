@@ -44,7 +44,7 @@ const ActiveChat = () => {
                   className={clsx(
                     'w-2/3 border flex flex-col gap-3 p-2 rounded-lg bg-black/60 text-white',
                     {
-                      'self-end': isOwnMessage,
+                      'self-end bg-black/80': isOwnMessage,
                     },
                   )}
                   key={message.id}>
