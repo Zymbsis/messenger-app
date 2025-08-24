@@ -27,7 +27,9 @@ const ContactsSelect = () => {
         onChange={handleSelectUser}
         className='h-full w-14 cursor-pointer opacity-0'
         name='users'
-        id='users'>
+        id='users'
+        defaultValue=''>
+        <option value='' disabled hidden></option>
         {users.map((user) => (
           <option key={user.id} value={user.id}>
             {user.email}
