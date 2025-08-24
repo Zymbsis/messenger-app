@@ -4,6 +4,7 @@ import { Outlet, useLocation } from 'react-router';
 import { useAppDispatch } from '../redux/hooks';
 import { getAllChats } from '../redux/chats/operations';
 import { getAllUsers, getCurrentUser } from '../redux/users/operations';
+import { WebSocketService } from '../services/websocketService';
 
 import ChatsHeader from '../components/ChatsHeader';
 import ChatsList from '../components/ChatsList';
@@ -13,9 +14,19 @@ const Chats = () => {
   const { pathname } = useLocation();
 
   useEffect(() => {
-    dispatch(getCurrentUser());
-    dispatch(getAllChats());
-    dispatch(getAllUsers());
+    (async () => {
+      await Promise.all([
+        dispatch(getCurrentUser()),
+        dispatch(getAllChats()),
+        dispatch(getAllUsers()),
+      ]);
+    })();
+
+    WebSocketService.connect(); // connect WebSocket on data loaded
+
+    return () => {
+      WebSocketService.disconnect();
+    };
   }, [dispatch]);
 
   return (

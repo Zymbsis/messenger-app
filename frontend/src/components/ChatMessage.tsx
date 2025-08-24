@@ -1,17 +1,18 @@
+import { useRef, useState, type FocusEvent } from 'react';
+import clsx from 'clsx';
 import { MdDeleteOutline, MdModeEditOutline } from 'react-icons/md';
 import { CiEdit } from 'react-icons/ci';
+import { FaRegCheckCircle } from 'react-icons/fa';
 
 import {
   useDeleteMessageMutation,
   useEditMessageMutation,
 } from '../redux/api/apiSlice';
+
+import { isNotEmpty } from '../helpers/validation';
 import { formattedDateTimeEn } from '../helpers/formatting';
 
 import type { Message } from '../types/types';
-import { useRef, useState } from 'react';
-import { FaRegCheckCircle } from 'react-icons/fa';
-import clsx from 'clsx';
-import { isNotEmpty } from '../helpers/validation';
 
 type Props = {
   message: Message;
@@ -22,7 +23,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const saveButtonRef = useRef<HTMLButtonElement | null>(null);
   const [editMode, setEditMode] = useState(false);
-  const [editedContent, setEditedContent] = useState(message.content);
+  const [editedContent, setEditedContent] = useState('');
 
   const createdAt = new Date(message.created_at);
   const updatedAt = new Date(message.updated_at);
@@ -34,6 +35,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
   const [editMessage] = useEditMessageMutation();
 
   const handleStartEditing = () => {
+    setEditedContent(message.content);
     setEditMode(true);
     inputRef.current?.focus();
   };
@@ -49,13 +51,11 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
   };
 
   const handleCancelEditing = () => {
-    setEditedContent(message.content);
+    setEditedContent('');
     setEditMode(false);
   };
 
-  const handleBlur = ({
-    relatedTarget,
-  }: React.FocusEvent<HTMLInputElement>) => {
+  const handleBlur = ({ relatedTarget }: FocusEvent<HTMLInputElement>) => {
     if (relatedTarget !== saveButtonRef.current) handleCancelEditing();
   };
 
@@ -72,7 +72,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
       <input
         ref={inputRef}
         type='text'
-        value={editedContent}
+        value={editMode ? editedContent : message.content}
         onChange={(e) => setEditedContent(e.target.value)}
         readOnly={!editMode}
         onBlur={handleBlur}

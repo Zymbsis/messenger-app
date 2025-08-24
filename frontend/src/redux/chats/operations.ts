@@ -9,9 +9,9 @@ export const getAllChats = createAsyncThunk<
   Chat[],
   undefined,
   { rejectValue: string }
->('chats/getAllChats', async (body, { rejectWithValue }) => {
+>('chats/getAllChats', async (_, { rejectWithValue }) => {
   try {
-    const { data } = await axiosInstance('/chats', body);
+    const { data } = await axiosInstance.get('/chats');
     return data;
   } catch (error) {
     if (error instanceof AxiosError)

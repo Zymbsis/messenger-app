@@ -1,44 +1,139 @@
 import { toast } from 'sonner';
 
-import type { Message, EventData } from '../types/types';
+import { store } from '../redux/store';
+import { apiSlice } from '../redux/api/apiSlice';
 
-type UpdateMessagesFn = (updateRecipe: (draft: Message[]) => void) => void;
+import type { EventData } from '../types/types';
 
-export class WebSocketService extends WebSocket {
-  constructor(url: string, updateMessagesFn: UpdateMessagesFn) {
-    super(url);
+const WEBSOCKET_URL = 'ws://localhost:8000/ws';
 
-    this.onmessage = (event) => {
-      try {
-        const { type, payload: message } = JSON.parse(event.data) as EventData;
+export class WebSocketService {
+  private static ws: WebSocket | null = null;
 
-        if (type === 'new_message') {
-          updateMessagesFn((draft) => {
-            draft.unshift(message);
-          });
-        }
+  private static dispatch = store.dispatch;
+  private static updateQueryData = apiSlice.util.updateQueryData;
 
-        if (type === 'edit_message') {
-          updateMessagesFn((draft) => {
-            const existing = draft.findIndex((msg) => msg.id === message.id);
-            if (existing !== -1) draft[existing] = message;
-          });
-        }
+  private static reconnectTimeout: number | null = null;
+  private static reconnectAttempts = 0;
+  private static readonly maxReconnectAttempts = 5;
+  private static readonly reconnectDelay = 1000;
 
-        if (type === 'delete_message') {
-          updateMessagesFn((draft) =>
-            draft.filter((msg) => msg.id !== message.id),
+  private constructor() {}
+
+  static connect(): void {
+    if (this.ws || this.isConnecting || this.isConnected) return;
+
+    console.log('Connecting WebSocket...');
+    try {
+      this.ws = new WebSocket(WEBSOCKET_URL);
+      this.setupListeners();
+    } catch (error) {
+      console.error('Failed to create WebSocket connection:', error);
+      this.reconnect();
+    }
+  }
+
+  static disconnect(): void {
+    if (this.isConnected) {
+      if (this.reconnectTimeout) {
+        clearTimeout(this.reconnectTimeout);
+        this.reconnectTimeout = null;
+      }
+
+      if (this.ws) {
+        this.ws.close();
+        this.ws = null;
+      }
+
+      this.reconnectAttempts = 0;
+    }
+  }
+
+  static send(data: string): void {
+    if (this.ws && this.isConnected) this.ws.send(data);
+  }
+
+  private static get isConnected(): boolean {
+    return this.ws?.readyState === WebSocket.OPEN;
+  }
+
+  private static get isConnecting(): boolean {
+    return this.ws?.readyState === WebSocket.CONNECTING;
+  }
+
+  private static setupListeners(): void {
+    if (!this.ws) return;
+
+    this.ws.onopen = () => {
+      this.reconnectAttempts = 0;
+      console.log('WebSocket connected');
+    };
+
+    this.ws.onmessage = (event) => {
+      const { type, payload } = JSON.parse(event.data) as EventData;
+
+      switch (type) {
+        case 'new_message':
+          this.dispatch(
+            this.updateQueryData('getMessages', payload.chat_id, (draft) => {
+              draft.unshift(payload);
+            }),
           );
-        }
-      } catch (error) {
-        toast.error('WebSocket: Error receiving new message');
-        console.error(error);
+          break;
+
+        case 'edit_message':
+          this.dispatch(
+            this.updateQueryData('getMessages', payload.chat_id, (draft) => {
+              const targetIndex = draft.findIndex((m) => m.id === payload.id);
+
+              if (targetIndex !== -1) draft[targetIndex] = payload;
+              return draft;
+            }),
+          );
+          break;
+
+        case 'delete_message':
+          this.dispatch(
+            this.updateQueryData('getMessages', payload.chat_id, (draft) => {
+              const targetIndex = draft.findIndex((m) => m.id === payload.id);
+
+              if (targetIndex !== -1) draft.splice(targetIndex, 1);
+            }),
+          );
+          break;
+
+        case 'message_read':
+          this.dispatch(
+            this.updateQueryData('getMessages', payload.chat_id, (draft) => {
+              const targetIndex = draft.findIndex((m) => m.id === payload.id);
+
+              if (targetIndex !== -1) draft[targetIndex].is_read = true;
+            }),
+          );
+          break;
       }
     };
 
-    this.onerror = (error) => {
-      toast.error('WebSocket: Connection lost');
-      console.error(error);
+    this.ws.onclose = () => {
+      console.log('WebSocket disconnected, attempting to reconnect...');
+      this.reconnect();
     };
+
+    this.ws.onerror = () => {
+      console.error('WebSocket error occurred');
+      this.reconnect();
+    };
+  }
+
+  private static reconnect(): void {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      toast.error('WebSocket: Failed to reconnect after multiple attempts');
+      return;
+    }
+
+    this.reconnectTimeout = setTimeout(() => {
+      this.reconnectAttempts++;
+      this.connect();
+    }, this.reconnectDelay * this.reconnectAttempts);
   }
 }
