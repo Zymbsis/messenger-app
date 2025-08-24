@@ -1,10 +1,8 @@
 import { useParams } from 'react-router';
 import clsx from 'clsx';
-
+import { useGetMessagesQuery } from '../redux/api/apiSlice';
 import { useAppSelector } from '../redux/hooks';
 import { selectCurrentUser } from '../redux/users/selectors';
-import { useGetMessagesQuery } from '../redux/api/apiSlice';
-
 import SendMessageForm from '../components/SendMessageForm';
 import ChatMessage from '../components/ChatMessage';
 
@@ -24,8 +22,13 @@ const ActiveChat = () => {
 
   if (isLoading)
     return <div className='flex-1 text-center p-4'>Loading...</div>;
+
   if (isError)
-    return <div className='flex-1 text-center p-4 text-red-500'>Error...</div>;
+    return (
+      <div className='flex-1 text-center p-4 text-red-500'>
+        Please reload the page or try again later.
+      </div>
+    );
 
   return (
     <div className='overflow-hidden flex-1 flex flex-col gap-4 pl-4 pb-4'>

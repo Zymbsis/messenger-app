@@ -1,6 +1,5 @@
 import type { FormEvent } from 'react';
 import { IoIosSend } from 'react-icons/io';
-
 import { useSendMessageMutation } from '../redux/api/apiSlice';
 import { isNotEmpty } from '../helpers/validation';
 
@@ -36,7 +35,7 @@ const SendMessageForm = ({ chatId }: Props) => {
       <button
         disabled={isSending}
         className='absolute bottom-0 right-0 size-12 p-2'>
-        <IoIosSend className='w-full h-full' />
+        <IoIosSend />
       </button>
     </form>
   );

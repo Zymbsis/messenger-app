@@ -66,3 +66,10 @@ export type Chat = {
 };
 
 export type ChatsState = { chats: Chat[] };
+
+export type DialogData = {
+  title: string;
+  description?: string;
+  onCancel?: () => void;
+  onConfirm: () => void;
+};

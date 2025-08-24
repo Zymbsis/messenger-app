@@ -6,6 +6,10 @@
   overflow: hidden;
   padding: 10vh 10vw;
   font-family: 'Noto Sans', sans-serif;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  scroll-behavior: smooth;
 }
 
 body {
@@ -18,9 +22,6 @@ button {
   cursor: pointer;
 }
 
-@theme {
-  --breakpoint-xs: 480px;
-}
 
 input,
 select,
@@ -48,6 +49,22 @@ a:hover {
   transform: scale(1.02);
 }
 
+button:focus {
+  outline: none;
+}
+
+dialog {
+  margin: auto;
+}
+
+dialog:focus {
+  outline: none;
+}
+
+dialog[open] {
+  animation: slide-in-from-top 0.35s ease-out;
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   @apply h-1 w-1;
 }
@@ -58,4 +75,20 @@ a:hover {
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   @apply bg-black/30 rounded-[2px];
+}
+
+@theme {
+  --breakpoint-xs: 480px;
+}
+
+@keyframes slide-in-from-top {
+  0% {
+    transform: translateY(-15%);
+    opacity: 0;
+  }
+
+  100% {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }

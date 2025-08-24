@@ -1,17 +1,16 @@
 import { useRef, useState, type FocusEvent } from 'react';
-import clsx from 'clsx';
-import { MdDeleteOutline, MdModeEditOutline } from 'react-icons/md';
 import { CiEdit } from 'react-icons/ci';
 import { FaRegCheckCircle } from 'react-icons/fa';
-
+import { MdDeleteOutline, MdModeEditOutline } from 'react-icons/md';
+import clsx from 'clsx';
 import {
   useDeleteMessageMutation,
   useEditMessageMutation,
 } from '../redux/api/apiSlice';
-
-import { isNotEmpty } from '../helpers/validation';
+import { CONFIRM_MESSAGES } from '../helpers/confirmMessages';
 import { formattedDateTimeEn } from '../helpers/formatting';
-
+import { isNotEmpty } from '../helpers/validation';
+import { useModalContext } from '../helpers/modalContext';
 import type { Message } from '../types/types';
 
 type Props = {
@@ -22,17 +21,15 @@ type Props = {
 const ChatMessage = ({ message, isOwnMessage }: Props) => {
   const inputRef = useRef<HTMLInputElement | null>(null);
   const saveButtonRef = useRef<HTMLButtonElement | null>(null);
+  const { handleSetDialogData } = useModalContext();
   const [editMode, setEditMode] = useState(false);
   const [editedContent, setEditedContent] = useState('');
+  const [deleteMessage] = useDeleteMessageMutation();
+  const [editMessage] = useEditMessageMutation();
 
   const createdAt = new Date(message.created_at);
   const updatedAt = new Date(message.updated_at);
   const isMessageEdited = +createdAt !== +updatedAt;
-
-  const [deleteMessage] = useDeleteMessageMutation();
-  const handleDeleteMessage = () => deleteMessage(message.id);
-
-  const [editMessage] = useEditMessageMutation();
 
   const handleStartEditing = () => {
     setEditedContent(message.content);
@@ -67,17 +64,25 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
     }
   };
 
+  const handleDeleteBtnClick = () => {
+    handleSetDialogData({
+      title: CONFIRM_MESSAGES.deleteMessage.title,
+      description: CONFIRM_MESSAGES.deleteMessage.description,
+      onConfirm: () => deleteMessage(message.id),
+    });
+  };
+
   return (
     <>
       <input
         ref={inputRef}
+        className={clsx({ 'border p-2 rounded-lg': editMode })}
         type='text'
+        readOnly={!editMode}
         value={editMode ? editedContent : message.content}
         onChange={(e) => setEditedContent(e.target.value)}
-        readOnly={!editMode}
         onBlur={handleBlur}
         onKeyDown={handleKeyDown}
-        className={clsx({ 'border p-2 rounded-lg': editMode })}
       />
       <div className='flex flex-nowrap gap-4 items-center justify-end'>
         <span className='gap-2 italic text-sm inline-flex shrink-0 md:whitespace-nowrap'>
@@ -98,7 +103,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
               {editMode ? <FaRegCheckCircle /> : <MdModeEditOutline />}
             </button>
             <button
-              onClick={handleDeleteMessage}
+              onClick={handleDeleteBtnClick}
               className='size-5'
               type='button'
               title='Delete message'>

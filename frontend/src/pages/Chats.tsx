@@ -1,13 +1,12 @@
 import { useEffect } from 'react';
 import { Outlet, useLocation } from 'react-router';
-
 import { useAppDispatch } from '../redux/hooks';
 import { getAllChats } from '../redux/chats/operations';
 import { getAllUsers, getCurrentUser } from '../redux/users/operations';
 import { WebSocketService } from '../services/websocketService';
-
 import ChatsHeader from '../components/ChatsHeader';
 import ChatsList from '../components/ChatsList';
+import ModalProvider from '../components/ModalProvider';
 
 const Chats = () => {
   const dispatch = useAppDispatch();
@@ -22,7 +21,7 @@ const Chats = () => {
       ]);
     })();
 
-    WebSocketService.connect(); // connect WebSocket on data loaded
+    WebSocketService.connect();
 
     return () => {
       WebSocketService.disconnect();
@@ -30,7 +29,7 @@ const Chats = () => {
   }, [dispatch]);
 
   return (
-    <>
+    <ModalProvider>
       <ChatsHeader />
       <main className='flex h-[calc(100%-56px)]'>
         <ChatsList />
@@ -39,7 +38,7 @@ const Chats = () => {
         )}
         <Outlet />
       </main>
-    </>
+    </ModalProvider>
   );
 };
 
