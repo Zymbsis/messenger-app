@@ -15,29 +15,27 @@ class MessageRepository:
         self.session.add(message)
         await self.session.commit()
         await self.session.refresh(message)
-
         return message
 
     async def update_message(self, message: Message) -> Message:
         self.session.add(message)
         await self.session.commit()
         await self.session.refresh(message)
-
         return message
 
-    async def delete_message(self, message: Message):
+    async def delete_message(self, message: Message) -> None:
         await self.session.delete(message)
         await self.session.commit()
 
-        return message
+    async def get_message_by_id(self, msg_id: int) -> Message | None:
+        return await self.session.get(Message, msg_id)
 
-    async def get_message_by_id(self, msg_id: int) -> Message:
-        message = await self.session.get(Message, msg_id)
-        if not message:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
-            )
-        return message
+    async def get_message_by_user_id(self, msg_id: int, user_id: int) -> Message | None:
+        statement = select(Message).where(
+            (Message.id == msg_id) & (Message.sender_id == user_id)
+        )
+        result = await self.session.exec(statement)
+        return result.scalar_one_or_none()
 
     async def get_messages_by_chat_id(self, chat_id: int) -> list[Message]:
         statement = (
@@ -47,8 +45,3 @@ class MessageRepository:
         )
         result = await self.session.exec(statement)
         return result.scalars().all()
-
-    def is_user_message_sender(self, msg_sender_id: int, user_id: int) -> True:
-        if msg_sender_id != user_id:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-        return True

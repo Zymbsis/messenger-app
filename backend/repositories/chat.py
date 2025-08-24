@@ -14,7 +14,6 @@ class ChatRepository:
         self.session.add(chat)
         await self.session.commit()
         await self.session.refresh(chat)
-
         return chat
 
     async def get_chats_by_user_id(self, user_id: int) -> list[Chat]:
@@ -22,24 +21,10 @@ class ChatRepository:
             (Chat.user1_id == user_id) | (Chat.user2_id == user_id)
         )
         result = await self.session.exec(statement)
-
         return result.all()
 
     async def get_chat_by_id(self, chat_id: int) -> Chat | None:
-        chat = await self.session.get(Chat, chat_id)
-        if not chat:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found"
-            )
-        return chat
-
-    async def is_chat_member(self, chat_id: int, user_id: int) -> bool:
-        chat = await self.get_chat_by_id(chat_id)
-
-        if user_id not in [chat.user1_id, chat.user2_id]:
-            raise HTTPException(status_code=status.HTTP_403_FORBIDDEN)
-
-        return True
+        return await self.session.get(Chat, chat_id)
 
     async def get_chat_by_user_id(self, chat_id: int, user_id: int) -> Chat | None:
         statement = (
@@ -50,24 +35,6 @@ class ChatRepository:
         result = await self.session.exec(statement)
         return result.one_or_none()
 
-    async def delete_chat(self, chat_id: int, user_id: int) -> None:
-        chat = await self.get_chat_by_user_id(chat_id, user_id)
-        
-        if not chat:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND, 
-                detail="Chat not found or you don't have permission to delete it"
-            )
-        
-        # Delete all messages in the chat first to avoid foreign key constraint issues
-        from models import Message
-        messages_statement = select(Message).where(Message.chat_id == chat_id)
-        messages_result = await self.session.exec(messages_statement)
-        messages = messages_result.all()
-        
-        for message in messages:
-            await self.session.delete(message)
-        
-        # Now delete the chat
+    async def delete_chat(self, chat: Chat) -> None:
         await self.session.delete(chat)
         await self.session.commit()

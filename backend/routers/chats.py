@@ -19,9 +19,9 @@ async def get_chat(
     chat_id: int, current_user: CurrentUserDependency, session: SessionDependency
 ):
     repo = ChatRepository(session)
-    chat = await repo.get_chat_by_id(chat_id)
+    chat = await repo.get_chat_by_user_id(chat_id, current_user.id)
 
-    if not chat or current_user.id not in [chat.user1_id, chat.user2_id]:
+    if not chat:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found"
         )
@@ -63,25 +63,12 @@ async def create_chat(
         None,
     )
 
-    if existing_chat:
-        return ChatRead(
-            id=existing_chat.id,
-            user1_id=existing_chat.user1_id,
-            user2_id=existing_chat.user2_id,
-            created_at=existing_chat.created_at,
-            updated_at=existing_chat.updated_at,
-        )
+    if not existing_chat:
+        chat_repo = ChatRepository(session)
+        new_chat = await chat_repo.create_new_chat(u1, u2)
+        return new_chat
 
-    chat_repo = ChatRepository(session)
-    new_chat = await chat_repo.create_new_chat(u1, u2)
-
-    return ChatRead(
-        id=new_chat.id,
-        user1_id=new_chat.user1_id,
-        user2_id=new_chat.user2_id,
-        created_at=new_chat.created_at,
-        updated_at=new_chat.updated_at,
-    )
+    return existing_chat
 
 
 @router.delete("/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)
@@ -89,4 +76,11 @@ async def delete_chat(
     chat_id: int, current_user: CurrentUserDependency, session: SessionDependency
 ):
     repo = ChatRepository(session)
-    await repo.delete_chat(chat_id, current_user.id)
+    chat = await repo.get_chat_by_user_id(chat_id, current_user.id)
+
+    if not chat:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found"
+        )
+
+    await repo.delete_chat(chat)

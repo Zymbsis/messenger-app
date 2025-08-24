@@ -36,13 +36,13 @@ async def websocket_endpoint(
 
                 if message_type == "message_read":
                     await handle_message_read(payload, current_user.id, session)
-                    
+
             except json.JSONDecodeError:
                 continue
             except Exception as e:
                 print(f"Error processing WebSocket message: {e}")
                 continue
-                
+
     except WebSocketDisconnect:
         manager.disconnect(websocket, current_user.id)
     except Exception as e:
@@ -52,24 +52,23 @@ async def websocket_endpoint(
 async def handle_message_read(payload: dict, user_id: int, session: SessionDependency):
     message_id = payload.get("id")
     chat_id = payload.get("chat_id")
-    
+
     if not message_id or not chat_id:
         return
-    
+
     msg_repo = MessageRepository(session)
-    chat_repo = ChatRepository(session)
-    
-    await chat_repo.is_chat_member(chat_id, user_id)
-    
+
     message = await msg_repo.get_message_by_id(message_id)
     if message.sender_id == user_id:
-        return  # Don't mark own messages as read
-    
+        return
+
     message.is_read = True
     await msg_repo.update_message(message)
-    
+
     broadcast_payload = {
         "type": "message_read",
-        "payload": {"id": message_id, "chat_id": chat_id}
+        "payload": {"id": message_id, "chat_id": chat_id},
     }
-    await manager.broadcast_to_chat(json.dumps(broadcast_payload, default=str), chat_id, session)
+    await manager.broadcast_to_chat(
+        json.dumps(broadcast_payload, default=str), chat_id, session
+    )

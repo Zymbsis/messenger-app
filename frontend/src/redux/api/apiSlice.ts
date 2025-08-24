@@ -24,7 +24,7 @@ const apiSlice = createApi({
     editMessage: builder.mutation<Message, { content: string; msgId: number }>({
       query: ({ content, msgId }) => ({
         url: `/messages/${msgId}`,
-        method: 'put',
+        method: 'patch',
         data: { content },
       }),
     }),
