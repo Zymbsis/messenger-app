@@ -1,8 +1,10 @@
+import json
 from core.auth.dependencies import CurrentUserDependency
 from core.db import SessionDependency
 from fastapi import APIRouter, HTTPException, status
 from repositories.chat import ChatRepository
 from repositories.user import UserRepository
+from routers.websockets import manager
 from schemas import ChatCreate, ChatRead
 
 router = APIRouter(prefix="/chats", tags=["Chats"])
@@ -83,4 +85,13 @@ async def delete_chat(
             status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found"
         )
 
+    partner_id = chat.user1_id if chat.user1_id != current_user.id else chat.user2_id
+
     await repo.delete_chat(chat)
+
+    broadcast_payload = {
+        "type": "delete_chat",
+        "payload": {"id": chat_id},
+    }
+    
+    await manager.send_personal_message(json.dumps(broadcast_payload, default=str), partner_id)
