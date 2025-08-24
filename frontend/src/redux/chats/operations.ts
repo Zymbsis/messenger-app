@@ -35,7 +35,7 @@ export const createNewChat = createAsyncThunk<
   }
 });
 
-export const deleteChat = createAsyncThunk<
+export const deleteChatById = createAsyncThunk<
   number,
   number,
   { rejectValue: string }

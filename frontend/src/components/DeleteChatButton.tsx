@@ -1,7 +1,8 @@
 import { useNavigate } from 'react-router';
 import { MdDeleteOutline } from 'react-icons/md';
 import { useAppDispatch } from '../redux/hooks';
-import { deleteChat } from '../redux/chats/operations';
+import { deleteChatById } from '../redux/chats/operations';
+
 import { CONFIRM_MESSAGES } from '../helpers/confirmMessages';
 import { useModalContext } from '../helpers/modalContext';
 
@@ -11,7 +12,7 @@ const DeleteChatButton = ({ chatId }: { chatId: number }) => {
   const { handleSetDialogData } = useModalContext();
 
   const handleDeleteChat = async () => {
-    await dispatch(deleteChat(chatId)).unwrap();
+    await dispatch(deleteChatById(chatId)).unwrap();
     navigate('/chats', { replace: true });
   };
 

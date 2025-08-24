@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Outlet, useLocation } from 'react-router';
+import { Outlet, useLocation, useNavigate } from 'react-router';
+
 import { useAppDispatch } from '../redux/hooks';
 import { getAllChats } from '../redux/chats/operations';
 import { getAllUsers, getCurrentUser } from '../redux/users/operations';
@@ -10,6 +11,7 @@ import ModalProvider from '../components/ModalProvider';
 
 const Chats = () => {
   const dispatch = useAppDispatch();
+  const navigate = useNavigate();
   const { pathname } = useLocation();
 
   useEffect(() => {
@@ -21,12 +23,13 @@ const Chats = () => {
       ]);
     })();
 
+    WebSocketService.navigate = navigate;
     WebSocketService.connect();
 
     return () => {
       WebSocketService.disconnect();
     };
-  }, [dispatch]);
+  }, [dispatch, navigate]);
 
   return (
     <ModalProvider>

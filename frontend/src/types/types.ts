@@ -53,6 +53,7 @@ export type Message = {
 
 export type EventData =
   | { type: 'new_message'; payload: Message }
+  | { type: 'delete_chat'; payload: Pick<Chat, 'id'> }
   | { type: 'delete_message'; payload: Pick<Message, 'id' | 'chat_id'> }
   | { type: 'edit_message'; payload: Message }
   | { type: 'message_read'; payload: Pick<Message, 'id' | 'chat_id'> };
@@ -73,3 +74,4 @@ export type DialogData = {
   onCancel?: () => void;
   onConfirm: () => void;
 };
+export type NavigateFn = (path: string | URL) => void;
