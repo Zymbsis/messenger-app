@@ -20,7 +20,7 @@ const ConfirmDialog = ({ title, description, onCancel, onConfirm }: Props) => {
         </button>
       </form>
       <div className='flex items-center flex-col h-full px-6 py-8 gap-6'>
-        <p className='text-[28px] font-medium'>{title}</p>
+        <p className='text-[26px] font-medium'>{title}</p>
         {description && <p className='text-center'>{description}</p>}
         <div className='flex gap-8'>
           <button

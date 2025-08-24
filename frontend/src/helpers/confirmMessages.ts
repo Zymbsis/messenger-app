@@ -7,7 +7,7 @@ export const CONFIRM_MESSAGES = {
   deleteMessage: {
     title: 'Delete Message?',
     description:
-      'Are you sure you want to delete this message? It will be permanently removed and cannot be recovered—for both you and the other participant.',
+      'Are you sure you want to delete this message? It will be permanently removed and cannot be recovered - for both you and the other participant.',
   },
   logout: {
     title: 'Do you want to logout?',
