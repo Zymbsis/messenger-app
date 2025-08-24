@@ -8,6 +8,27 @@ from schemas import ChatCreate, ChatRead
 router = APIRouter(prefix="/chats", tags=["Chats"])
 
 
+@router.get("", response_model=list[ChatRead])
+async def get_chats(current_user: CurrentUserDependency, session: SessionDependency):
+    repo = ChatRepository(session)
+    return await repo.get_chats_by_user_id(current_user.id)
+
+
+@router.get("/{chat_id}", response_model=ChatRead)
+async def get_chat(
+    chat_id: int, current_user: CurrentUserDependency, session: SessionDependency
+):
+    repo = ChatRepository(session)
+    chat = await repo.get_chat_by_id(chat_id)
+
+    if not chat or current_user.id not in [chat.user1_id, chat.user2_id]:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found"
+        )
+
+    return chat
+
+
 @router.post("", response_model=ChatRead, status_code=status.HTTP_201_CREATED)
 async def create_chat(
     chat_data: ChatCreate,
@@ -61,27 +82,6 @@ async def create_chat(
         created_at=new_chat.created_at,
         updated_at=new_chat.updated_at,
     )
-
-
-@router.get("", response_model=list[ChatRead])
-async def get_chats(current_user: CurrentUserDependency, session: SessionDependency):
-    repo = ChatRepository(session)
-    return await repo.get_chats_by_user_id(current_user.id)
-
-
-@router.get("/{chat_id}", response_model=ChatRead)
-async def get_chat(
-    chat_id: int, current_user: CurrentUserDependency, session: SessionDependency
-):
-    repo = ChatRepository(session)
-    chat = await repo.get_chat_by_id(chat_id)
-
-    if not chat or current_user.id not in [chat.user1_id, chat.user2_id]:
-        raise HTTPException(
-            status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found"
-        )
-
-    return chat
 
 
 @router.delete("/{chat_id}", status_code=status.HTTP_204_NO_CONTENT)

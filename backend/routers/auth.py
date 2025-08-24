@@ -95,11 +95,12 @@ async def refresh(
     return {"message": "Refreshed successfully"}
 
 
-@router.post("/logout")
+@router.post(
+    "/logout",
+    status_code=status.HTTP_204_NO_CONTENT,
+)
 async def logout(
     response: Response,
 ):
     response.delete_cookie(key="access_token")
     response.delete_cookie(key="refresh_token")
-
-    return {"message": "Logged out successfully"}
