@@ -28,11 +28,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
 
         {isOwnMessage && (
           <div className='flex h-full gap-1.5'>
-            <button
-              onClick={handleDeleteMessage}
-              className='size-5'
-              type='button'
-              title='Edit message'>
+            <button className='size-5' type='button' title='Edit message'>
               <MdModeEditOutline />
             </button>
             <button
