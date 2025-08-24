@@ -1,22 +1,10 @@
-import { toast } from 'sonner';
-import type { AxiosError, AxiosRequestConfig, AxiosResponse } from 'axios';
+import type { AxiosError } from 'axios';
 import type { BaseQueryFn } from '@reduxjs/toolkit/query';
+import { toast } from 'sonner';
 
 import { axiosInstance } from '../axios-instance';
 
-type BaseQuery = {
-  url: string;
-  method?: AxiosRequestConfig['method'];
-  data?: AxiosRequestConfig['data'];
-  params?: AxiosRequestConfig['params'];
-};
-
-type ApiResult = AxiosResponse['data'];
-
-type ApiError = {
-  status: number | undefined;
-  data: { detail?: string } | string;
-};
+import type { ApiError, ApiResult, BaseQuery } from '../../types/types';
 
 export const axiosBaseQuery =
   (): BaseQueryFn<BaseQuery, ApiResult, ApiError> =>

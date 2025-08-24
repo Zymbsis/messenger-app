@@ -2,6 +2,7 @@ import { NavLink } from 'react-router';
 import { useAppSelector } from '../redux/hooks';
 import { selectChats } from '../redux/chats/selectors';
 import { selectCurrentUser, selectUsers } from '../redux/users/selectors';
+
 import DeleteChatButton from './DeleteChatButton';
 
 const ChatsList = () => {

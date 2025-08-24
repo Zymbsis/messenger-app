@@ -3,7 +3,7 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 import { axiosBaseQuery } from './axiosBaseQuery';
 import { WebSocketService } from '../../services/websocketService';
 
-import type { Message } from '../../types';
+import type { Message } from '../../types/types';
 
 const WEBSOCKET_URL = 'ws://localhost:8000/ws';
 

@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
-import { FormTypeEnum } from './enums';
+
+import { FormTypeEnum } from '../types/enums';
 
 type Props = { formType: FormTypeEnum };
 

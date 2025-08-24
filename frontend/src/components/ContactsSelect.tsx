@@ -1,9 +1,10 @@
 import type { ChangeEvent } from 'react';
-import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { useNavigate } from 'react-router';
+import { IoMdPersonAdd } from 'react-icons/io';
+
+import { useAppDispatch, useAppSelector } from '../redux/hooks';
 import { createNewChat } from '../redux/chats/operations';
 import { selectUsers } from '../redux/users/selectors';
-import { IoMdPersonAdd } from 'react-icons/io';
 
 const ContactsSelect = () => {
   const dispatch = useAppDispatch();

@@ -1,12 +1,10 @@
-import { toast } from 'sonner';
 import { AxiosError } from 'axios';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { toast } from 'sonner';
+
 import { axiosInstance } from '../axios-instance';
 
-type AuthBody = {
-  email: string;
-  password: string;
-};
+import type { AuthBody } from '../../types/types';
 
 const toastMessages = {
   register: {

@@ -1,14 +1,8 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+
 import { createNewChat, deleteChat, getAllChats } from './operations';
 
-export type Chat = {
-  id: number;
-  user1_id: number;
-  user2_id: number;
-  created_at: string;
-  updated_ta: string;
-};
-type ChatsState = { chats: Chat[] };
+import type { ChatsState, Chat } from '../../types/types';
 
 const initialState: ChatsState = { chats: [] };
 

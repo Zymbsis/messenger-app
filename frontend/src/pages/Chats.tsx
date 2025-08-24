@@ -1,8 +1,10 @@
-import { Outlet } from 'react-router';
-import { useAppDispatch } from '../redux/hooks';
 import { useEffect } from 'react';
+import { Outlet } from 'react-router';
+
+import { useAppDispatch } from '../redux/hooks';
 import { getAllChats } from '../redux/chats/operations';
 import { getAllUsers, getCurrentUser } from '../redux/users/operations';
+
 import ChatsHeader from '../components/ChatsHeader';
 import ChatsList from '../components/ChatsList';
 

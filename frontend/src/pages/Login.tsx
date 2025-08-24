@@ -1,6 +1,6 @@
 import { useActionState } from 'react';
 import AuthForm from '../components/AuthForm';
-import { FormTypeEnum } from '../components/enums';
+import { FormTypeEnum } from '../types/enums';
 import { signInAction } from '../helpers/signInAction';
 
 const Login = () => {

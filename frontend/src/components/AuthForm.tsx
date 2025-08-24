@@ -2,17 +2,10 @@ import type { ComponentPropsWithRef } from 'react';
 import InputField from './InputField';
 import PasswordField from './PasswordField';
 import AuthSwitchMessage from './AuthSwitchMessage';
-import type { FormTypeEnum } from './enums';
 import FormValidationErrors from './FormValidationErrors';
 
-export type FormState = {
-  errors: null | string[];
-  enteredValues?: {
-    email: FormDataEntryValue | null;
-    password: FormDataEntryValue | null;
-    confirmPassword: FormDataEntryValue | null;
-  };
-};
+import type { FormTypeEnum } from '../types/enums';
+import type { FormState } from '../types/types';
 
 type Props = ComponentPropsWithRef<'form'> & {
   formType: FormTypeEnum;

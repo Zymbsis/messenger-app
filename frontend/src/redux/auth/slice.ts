@@ -1,10 +1,9 @@
 import { createSlice } from '@reduxjs/toolkit';
 import storage from 'redux-persist/lib/storage';
+
 import { login, logout } from './operations';
 
-type AuthState = {
-  isAuthenticated: boolean;
-};
+import type { AuthState } from '../../types/types';
 
 const initialState: AuthState = { isAuthenticated: false };
 

@@ -1,12 +1,14 @@
-import type { FormState } from '../components/AuthForm.tsx';
 import { register } from '../redux/auth/operations.ts';
+import { store } from '../redux/store.ts';
+
 import {
   isEmail,
   isNotEmpty,
   isEqualToOtherValue,
   hasMinLength,
 } from './validation.ts';
-import { store } from '../redux/store.ts';
+
+import type { FormState } from '../types/types';
 
 export const signUpAction = async (_: FormState, formData: FormData) => {
   const email = String(formData.get('email') || '');

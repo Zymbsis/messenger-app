@@ -1,6 +1,6 @@
 import { toast } from 'sonner';
 
-import type { Message, EventData } from '../types';
+import type { Message, EventData } from '../types/types';
 
 type UpdateMessagesFn = (updateRecipe: (draft: Message[]) => void) => void;
 

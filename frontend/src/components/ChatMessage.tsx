@@ -4,7 +4,7 @@ import { CiEdit } from 'react-icons/ci';
 import { useDeleteMessageMutation } from '../redux/api/apiSlice';
 import { formattedDateTimeEn } from '../helpers/formatting';
 
-import type { Message } from '../types';
+import type { Message } from '../types/types';
 
 type Props = {
   message: Message;

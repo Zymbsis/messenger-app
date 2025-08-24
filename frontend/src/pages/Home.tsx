@@ -1,8 +1,9 @@
 import { Link } from 'react-router';
+
 import { useAppSelector } from '../redux/hooks';
 import { selectIsAuthenticated } from '../redux/auth/selectors';
 
-const routs = [
+const routes = [
   { path: '/register', name: 'Sign Up' },
   { path: '/login', name: 'Sign In' },
 ];
@@ -15,7 +16,7 @@ const Home = () => {
       <h1 className='text-4xl font-bold'>Welcome to the messenger app</h1>
       {!isAuthenticated && (
         <ul className='flex gap-5'>
-          {routs.map((route) => (
+          {routes.map((route) => (
             <li key={route.name}>
               <Link
                 className='w-34 h-12 rounded-lg bg-black/90  flex justify-center items-center text-xl font-medium text-white'

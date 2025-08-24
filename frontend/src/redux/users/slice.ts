@@ -1,8 +1,8 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
+
 import { getAllUsers, getCurrentUser } from './operations';
 
-export type User = { id: number; email: string; created_at: string };
-type UsersState = { currentUser?: User; usersList: User[] };
+import type { UsersState, User } from '../../types/types';
 
 const initialState: UsersState = { currentUser: undefined, usersList: [] };
 

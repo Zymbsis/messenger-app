@@ -1,11 +1,8 @@
-import {
-  type AxiosRequestConfig,
-  type AxiosResponse,
-  type AxiosError,
-} from 'axios';
+import type { AxiosRequestConfig, AxiosResponse, AxiosError } from 'axios';
+
+import { store } from './store';
 import { axiosInstance } from './axios-instance';
 import { logout, refresh } from './auth/operations';
-import { store } from './store';
 
 interface ExtendedAxiosRequestConfig extends AxiosRequestConfig {
   _retry?: boolean;

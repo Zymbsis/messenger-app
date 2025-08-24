@@ -1,7 +1,9 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
 import { AxiosError } from 'axios';
-import type { User } from './slice';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
 import { axiosInstance } from '../axios-instance';
+
+import type { User } from '../../types/types';
 
 export const getCurrentUser = createAsyncThunk<
   User,

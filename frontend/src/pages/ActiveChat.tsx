@@ -1,9 +1,11 @@
 import { useParams } from 'react-router';
+import clsx from 'clsx';
+
 import { useAppSelector } from '../redux/hooks';
 import { selectCurrentUser } from '../redux/users/selectors';
 import { useGetMessagesQuery } from '../redux/api/apiSlice';
+
 import SendMessageForm from '../components/SendMessageForm';
-import clsx from 'clsx';
 import ChatMessage from '../components/ChatMessage';
 
 const ActiveChat = () => {

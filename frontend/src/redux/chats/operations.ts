@@ -1,7 +1,9 @@
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { axiosInstance } from '../axios-instance';
 import { AxiosError } from 'axios';
-import type { Chat } from './slice';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+
+import { axiosInstance } from '../axios-instance';
+
+import type { Chat } from '../../types/types';
 
 export const getAllChats = createAsyncThunk<
   Chat[],

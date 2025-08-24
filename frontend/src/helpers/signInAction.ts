@@ -1,7 +1,9 @@
-import type { FormState } from '../components/AuthForm.tsx';
 import { login } from '../redux/auth/operations.ts';
-import { isEmail, isNotEmpty, hasMinLength } from './validation.ts';
 import { store } from '../redux/store.ts';
+
+import { isEmail, isNotEmpty, hasMinLength } from './validation.ts';
+
+import type { FormState } from '../types/types.ts';
 
 export const signInAction = (_: FormState, formData: FormData) => {
   const email = String(formData.get('email') || '');

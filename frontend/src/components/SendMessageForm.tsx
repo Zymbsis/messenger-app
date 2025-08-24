@@ -1,6 +1,7 @@
 import type { FormEvent } from 'react';
-import { useSendMessageMutation } from '../redux/api/apiSlice';
 import { IoIosSend } from 'react-icons/io';
+
+import { useSendMessageMutation } from '../redux/api/apiSlice';
 
 type Props = { chatId: number };
 
