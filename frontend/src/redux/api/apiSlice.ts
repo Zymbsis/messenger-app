@@ -47,5 +47,4 @@ export const {
   useEditMessageMutation,
 } = apiSlice;
 
-// Export the apiSlice itself for updateQueryData access
 export { apiSlice };
