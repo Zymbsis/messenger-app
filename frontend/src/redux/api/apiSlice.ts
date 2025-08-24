@@ -10,6 +10,10 @@ type EventData =
   | {
       type: 'delete_message';
       payload: { id: number };
+    }
+  | {
+      type: 'edit_message';
+      payload: Message;
     };
 
 const WEBSOCKET_URL = 'ws://localhost:8000/ws';
@@ -37,6 +41,15 @@ const apiSlice = createApi({
                 return [message, ...draft];
               });
             }
+            if (eventData.type === 'edit_message') {
+              const message = eventData.payload;
+              updateCachedData((draft) => {
+                const existing = draft.findIndex(
+                  (msg) => msg.id === message.id,
+                );
+                if (existing !== -1) draft[existing] = message;
+              });
+            }
             if (eventData.type === 'delete_message') {
               const { id } = eventData.payload;
               updateCachedData((draft) =>
@@ -60,6 +73,15 @@ const apiSlice = createApi({
         }),
       },
     ),
+    editMessage: builder.mutation<Message, { content: string; chatId: number }>(
+      {
+        query: ({ content, chatId }) => ({
+          url: `/messages/${chatId}`,
+          method: 'put',
+          data: { content },
+        }),
+      },
+    ),
     deleteMessage: builder.mutation<void, number>({
       query: (chatId) => ({
         url: `/messages/${chatId}`,
@@ -76,4 +98,5 @@ export const {
   useGetMessagesQuery,
   useSendMessageMutation,
   useDeleteMessageMutation,
+  useEditMessageMutation,
 } = apiSlice;
