@@ -3,6 +3,8 @@ from datetime import datetime
 from pydantic import EmailStr
 from sqlmodel import (
     CheckConstraint,
+    Column,
+    DateTime,
     Field,
     Relationship,
     SQLModel,
@@ -18,10 +20,18 @@ class User(SQLModel, table=True):
     email: EmailStr = Field(unique=True, index=True, max_length=254)
     hashed_password: str = Field(min_length=60, max_length=60)
     created_at: datetime = Field(
-        sa_column_kwargs={"server_default": func.now()}, nullable=False
+        sa_column=Column(
+            DateTime(timezone=True),
+            server_default=func.now(),
+            nullable=False,
+        )
     )
     last_seen: datetime = Field(
-        sa_column_kwargs={"server_default": func.now()}, nullable=False
+        sa_column=Column(
+            DateTime(timezone=True),
+            server_default=func.now(),
+            nullable=False,
+        )
     )
 
     chats_as_user1: list["Chat"] = Relationship(
@@ -48,11 +58,19 @@ class Chat(SQLModel, table=True):
     user1_id: int = Field(foreign_key="users.id", index=True)
     user2_id: int = Field(foreign_key="users.id", index=True)
     created_at: datetime = Field(
-        sa_column_kwargs={"server_default": func.now()}, nullable=False
+        sa_column=Column(
+            DateTime(timezone=True),
+            server_default=func.now(),
+            nullable=False,
+        )
     )
     updated_at: datetime = Field(
-        sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()},
-        nullable=False,
+        sa_column=Column(
+            DateTime(timezone=True),
+            server_default=func.now(),
+            onupdate=func.now(),
+            nullable=False,
+        )
     )
 
     user1: "User" = Relationship(
@@ -76,12 +94,19 @@ class Message(SQLModel, table=True):
     message_type: str = Field(default="text", max_length=20)
     is_read: bool = Field(default=False)
     created_at: datetime = Field(
-        sa_column_kwargs={"server_default": func.now()},
-        nullable=False,
+        sa_column=Column(
+            DateTime(timezone=True),
+            server_default=func.now(),
+            nullable=False,
+        )
     )
     updated_at: datetime = Field(
-        sa_column_kwargs={"server_default": func.now(), "onupdate": func.now()},
-        nullable=False,
+        sa_column=Column(
+            DateTime(timezone=True),
+            server_default=func.now(),
+            onupdate=func.now(),
+            nullable=False,
+        )
     )
 
     chat: Chat = Relationship(back_populates="messages")
