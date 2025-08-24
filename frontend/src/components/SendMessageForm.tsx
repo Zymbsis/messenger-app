@@ -2,6 +2,7 @@ import type { FormEvent } from 'react';
 import { IoIosSend } from 'react-icons/io';
 
 import { useSendMessageMutation } from '../redux/api/apiSlice';
+import { isNotEmpty } from '../helpers/validation';
 
 type Props = { chatId: number };
 
@@ -14,7 +15,7 @@ const SendMessageForm = ({ chatId }: Props) => {
     const content = (form.elements.namedItem('message') as HTMLTextAreaElement)
       .value;
 
-    if (!content.trim() || !chatId) return;
+    if (!isNotEmpty(content)) return;
 
     try {
       await sendMessage({ content, chatId }).unwrap();

@@ -38,18 +38,16 @@ const apiSlice = createApi({
         }),
       },
     ),
-    editMessage: builder.mutation<Message, { content: string; chatId: number }>(
-      {
-        query: ({ content, chatId }) => ({
-          url: `/messages/${chatId}`,
-          method: 'put',
-          data: { content },
-        }),
-      },
-    ),
+    editMessage: builder.mutation<Message, { content: string; msgId: number }>({
+      query: ({ content, msgId }) => ({
+        url: `/messages/${msgId}`,
+        method: 'put',
+        data: { content },
+      }),
+    }),
     deleteMessage: builder.mutation<void, number>({
-      query: (chatId) => ({
-        url: `/messages/${chatId}`,
+      query: (msgId) => ({
+        url: `/messages/${msgId}`,
         method: 'delete',
       }),
     }),

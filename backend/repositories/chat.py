@@ -27,7 +27,6 @@ class ChatRepository:
 
     async def get_chat_by_id(self, chat_id: int) -> Chat | None:
         chat = await self.session.get(Chat, chat_id)
-        print("*" * 80)
         if not chat:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found"
