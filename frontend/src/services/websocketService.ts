@@ -2,8 +2,11 @@ import { toast } from 'sonner';
 
 import { store } from '../redux/store';
 import { apiSlice } from '../redux/api/apiSlice';
+import { deleteChat } from '../redux/chats/slice';
+import { getAllChats } from '../redux/chats/operations';
+import { refresh } from '../redux/auth/operations';
 
-import type { EventData } from '../types/types';
+import type { EventData, NavigateFn } from '../types/types';
 
 const WEBSOCKET_URL = 'ws://localhost:8000/ws';
 
@@ -12,10 +15,11 @@ export class WebSocketService {
 
   private static dispatch = store.dispatch;
   private static updateQueryData = apiSlice.util.updateQueryData;
+  private static navigateFn: NavigateFn = window.location.replace;
 
   private static reconnectTimeout: number | null = null;
   private static reconnectAttempts = 0;
-  private static readonly maxReconnectAttempts = 5;
+  private static readonly maxReconnectAttempts = 3;
   private static readonly reconnectDelay = 1000;
 
   private constructor() {}
@@ -31,6 +35,21 @@ export class WebSocketService {
       console.error('Failed to create WebSocket connection:', error);
       this.reconnect();
     }
+  }
+
+  static reconnect(): void {
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      toast.error('WebSocket: Failed to reconnect after multiple attempts');
+      return;
+    }
+
+    if (this.reconnectAttempts == 1) this.dispatch(refresh());
+
+    this.reconnectTimeout = setTimeout(() => {
+      this.reconnectAttempts++;
+
+      this.connect();
+    }, this.reconnectDelay * this.reconnectAttempts);
   }
 
   static disconnect(): void {
@@ -49,8 +68,8 @@ export class WebSocketService {
     }
   }
 
-  static send(data: string): void {
-    if (this.ws && this.isConnected) this.ws.send(data);
+  static set navigate(navigateFn: NavigateFn) {
+    this.navigateFn = navigateFn;
   }
 
   private static get isConnected(): boolean {
@@ -73,15 +92,23 @@ export class WebSocketService {
       const { type, payload } = JSON.parse(event.data) as EventData;
 
       switch (type) {
-        case 'new_message':
-          this.dispatch(
-            this.updateQueryData('getMessages', payload.chat_id, (draft) => {
-              draft.unshift(payload);
-            }),
-          );
-          break;
+        case 'new_message': {
+          const { chat_id } = payload;
+          const allChatsIds = store.getState().chats.chats.map(({ id }) => id);
 
-        case 'edit_message':
+          if (!allChatsIds.includes(chat_id)) {
+            this.dispatch(getAllChats());
+          } else {
+            this.dispatch(
+              this.updateQueryData('getMessages', chat_id, (draft) => {
+                draft.unshift(payload);
+              }),
+            );
+          }
+          break;
+        }
+
+        case 'edit_message': {
           this.dispatch(
             this.updateQueryData('getMessages', payload.chat_id, (draft) => {
               const targetIndex = draft.findIndex((m) => m.id === payload.id);
@@ -91,8 +118,9 @@ export class WebSocketService {
             }),
           );
           break;
+        }
 
-        case 'delete_message':
+        case 'delete_message': {
           this.dispatch(
             this.updateQueryData('getMessages', payload.chat_id, (draft) => {
               const targetIndex = draft.findIndex((m) => m.id === payload.id);
@@ -101,8 +129,9 @@ export class WebSocketService {
             }),
           );
           break;
+        }
 
-        case 'message_read':
+        case 'message_read': {
           this.dispatch(
             this.updateQueryData('getMessages', payload.chat_id, (draft) => {
               const targetIndex = draft.findIndex((m) => m.id === payload.id);
@@ -111,6 +140,21 @@ export class WebSocketService {
             }),
           );
           break;
+        }
+
+        case 'delete_chat': {
+          const deletedChatId = payload.id;
+
+          this.dispatch(deleteChat(deletedChatId));
+
+          const currentChatId = Number(
+            window.location.pathname.split('/').pop(),
+          );
+
+          if (currentChatId === deletedChatId) this.navigateFn('/chats');
+
+          break;
+        }
       }
     };
 
@@ -123,17 +167,5 @@ export class WebSocketService {
       console.error('WebSocket error occurred');
       this.reconnect();
     };
-  }
-
-  private static reconnect(): void {
-    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      toast.error('WebSocket: Failed to reconnect after multiple attempts');
-      return;
-    }
-
-    this.reconnectTimeout = setTimeout(() => {
-      this.reconnectAttempts++;
-      this.connect();
-    }, this.reconnectDelay * this.reconnectAttempts);
   }
 }
