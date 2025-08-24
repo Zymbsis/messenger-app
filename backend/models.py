@@ -81,7 +81,9 @@ class Chat(SQLModel, table=True):
         back_populates="chats_as_user2",
         sa_relationship_kwargs={"foreign_keys": "Chat.user2_id"},
     )
-    messages: list["Message"] = Relationship(back_populates="chat")
+    messages: list["Message"] = Relationship(
+        back_populates="chat", sa_relationship_kwargs={"cascade": "all, delete-orphan"}
+    )
 
 
 class Message(SQLModel, table=True):
