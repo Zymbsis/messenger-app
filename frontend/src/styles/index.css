@@ -36,6 +36,17 @@ svg {
   height: 100%;
 }
 
+button,
+a {
+  transition: all 0.3s ease-in-out;
+  will-change: contents;
+}
+
+button:hover,
+a:hover {
+  transform: scale(1.02);
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   @apply h-1 w-1;
 }

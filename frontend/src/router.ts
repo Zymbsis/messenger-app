@@ -7,6 +7,7 @@ import Chats from './pages/Chats';
 import ActiveChat from './pages/ActiveChat';
 import RestrictedRoute from './components/RestrictedRoute';
 import ProtectedRoute from './components/ProtectedRoute';
+import NotFound from './pages/NotFound';
 
 export default createBrowserRouter([
   {
@@ -31,6 +32,7 @@ export default createBrowserRouter([
           },
         ],
       },
+      { path: '*', Component: NotFound },
     ],
   },
 ]);
