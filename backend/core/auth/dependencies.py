@@ -20,6 +20,10 @@ def verify_token_http(token: TokenDependency) -> str:
 
 
 def verify_token_ws(token: WSTokenDependency) -> str:
+    if not token:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="No authentication token"
+        )
     payload = verify_token(token)
     return payload.sub
 
@@ -38,14 +42,14 @@ async def get_current_user_http(
     session: SessionDependency,
     user_id: Annotated[str, Depends(verify_token_http)],
 ) -> User:
-    return await get_current_user(session, int(user_id))
+    return await get_current_user(session, user_id)
 
 
 async def get_current_user_ws(
     session: SessionDependency,
     user_id: Annotated[str, Depends(verify_token_ws)],
 ) -> User:
-    return await get_current_user(session, int(user_id))
+    return await get_current_user(session, user_id)
 
 
 CurrentUserDependency = Annotated[User, Security(get_current_user_http)]

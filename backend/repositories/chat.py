@@ -52,5 +52,22 @@ class ChatRepository:
 
     async def delete_chat(self, chat_id: int, user_id: int) -> None:
         chat = await self.get_chat_by_user_id(chat_id, user_id)
+        
+        if not chat:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND, 
+                detail="Chat not found or you don't have permission to delete it"
+            )
+        
+        # Delete all messages in the chat first to avoid foreign key constraint issues
+        from models import Message
+        messages_statement = select(Message).where(Message.chat_id == chat_id)
+        messages_result = await self.session.exec(messages_statement)
+        messages = messages_result.all()
+        
+        for message in messages:
+            await self.session.delete(message)
+        
+        # Now delete the chat
         await self.session.delete(chat)
         await self.session.commit()

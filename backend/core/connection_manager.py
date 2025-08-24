@@ -1,32 +1,40 @@
 import asyncio
+import json
 
 from fastapi import WebSocket
+from repositories.chat import ChatRepository
 
 
 class ConnectionManager:
     def __init__(self) -> None:
-        self.active_connections: dict[int, list[WebSocket]] = {}
+        self.active_connections: dict[int, WebSocket] = {}
 
-    async def connect(self, websocket: WebSocket, chat_id: int):
+    async def connect(self, websocket: WebSocket, user_id: int):
         await websocket.accept()
+        self.active_connections[user_id] = websocket
 
-        if chat_id not in self.active_connections:
-            self.active_connections[chat_id] = []
-        self.active_connections[chat_id].append(websocket)
+    def disconnect(self, websocket: WebSocket, user_id: int):
+        if user_id in self.active_connections:
+            del self.active_connections[user_id]
 
-    def disconnect(self, websocket: WebSocket, chat_id: int):
-        if chat_id in self.active_connections:
-            self.active_connections[chat_id].remove(websocket)
+    async def send_personal_message(self, message: str, user_id: int):
+        if user_id in self.active_connections:
+            try:
+                await self.active_connections[user_id].send_text(message)
+            except Exception:
+                del self.active_connections[user_id]
 
-        if not self.active_connections[chat_id]:
-            del self.active_connections[chat_id]
-
-    async def broadcast(self, message: str, chat_id: int):
-        if chat_id in self.active_connections:
+    async def broadcast_to_chat(self, message: str, chat_id: int, session):
+        chat_repo = ChatRepository(session)
+        chat = await chat_repo.get_chat_by_id(chat_id)
+        
+        if chat:
+            user_ids = [chat.user1_id, chat.user2_id]
             await asyncio.gather(
                 *[
-                    connection.send_text(message)
-                    for connection in self.active_connections[chat_id]
+                    self.send_personal_message(message, user_id)
+                    for user_id in user_ids
+                    if user_id in self.active_connections
                 ],
                 return_exceptions=True,
             )

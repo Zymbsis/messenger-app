@@ -40,7 +40,7 @@ async def add_message(
 
     message = await msg_repo.add_new_message(msg_data.content, chat_id, current_user.id)
     broadcast_payload = {"type": "new_message", "payload": message.model_dump()}
-    await manager.broadcast(json.dumps(broadcast_payload, default=str), chat_id)
+    await manager.broadcast_to_chat(json.dumps(broadcast_payload, default=str), chat_id, session)
 
     return message
 
@@ -69,7 +69,7 @@ async def edit_message(
         "type": "edit_message",
         "payload": updated_message.model_dump(),
     }
-    await manager.broadcast(json.dumps(broadcast_payload, default=str), message.chat_id)
+    await manager.broadcast_to_chat(json.dumps(broadcast_payload, default=str), message.chat_id, session)
 
     return updated_message
 
@@ -91,6 +91,6 @@ async def delete_message(
     await msg_repo.delete_message(message)
     broadcast_payload = {
         "type": "delete_message",
-        "payload": {"id": msg_id},
+        "payload": {"id": msg_id, "chat_id": message.chat_id},
     }
-    await manager.broadcast(json.dumps(broadcast_payload), message.chat_id)
+    await manager.broadcast_to_chat(json.dumps(broadcast_payload, default=str), message.chat_id, session)
