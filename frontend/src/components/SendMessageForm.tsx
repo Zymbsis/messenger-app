@@ -1,4 +1,4 @@
-import type { FormEvent } from 'react';
+import type { FormEvent, KeyboardEvent } from 'react';
 import { IoIosSend } from 'react-icons/io';
 import { useSendMessageMutation } from '../redux/api/apiSlice';
 import { isNotEmpty } from '../helpers/validation';
@@ -19,8 +19,20 @@ const SendMessageForm = ({ chatId }: Props) => {
     try {
       await sendMessage({ content, chatId }).unwrap();
       form.reset();
+
+      const timeout = setTimeout(() => {
+        (form.elements.namedItem('message') as HTMLTextAreaElement).focus();
+        clearTimeout(timeout);
+      }, 25);
     } catch (error) {
       console.error('Failed to send the message: ', error);
+    }
+  };
+
+  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+      e.preventDefault();
+      e.currentTarget.form?.requestSubmit();
     }
   };
 
@@ -31,8 +43,10 @@ const SendMessageForm = ({ chatId }: Props) => {
       <textarea
         disabled={isSending}
         className='w-full h-full p-2'
+        onKeyDown={handleKeyDown}
         name='message'></textarea>
       <button
+        title='Ctrl / Cmd + Enter to send'
         disabled={isSending}
         className='absolute bottom-0 right-0 size-12 p-2'>
         <IoIosSend />

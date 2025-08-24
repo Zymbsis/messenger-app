@@ -4,6 +4,7 @@ import { Outlet, useLocation, useNavigate } from 'react-router';
 import { useAppDispatch } from '../redux/hooks';
 import { getAllChats } from '../redux/chats/operations';
 import { getAllUsers, getCurrentUser } from '../redux/users/operations';
+import { ActivityService } from '../services/activityService';
 import { WebSocketService } from '../services/websocketService';
 import ChatsHeader from '../components/ChatsHeader';
 import ChatsList from '../components/ChatsList';
@@ -23,11 +24,15 @@ const Chats = () => {
       ]);
     })();
 
-    WebSocketService.navigate = navigate;
+    WebSocketService.setNavigateFn(navigate);
     WebSocketService.connect();
+
+    ActivityService.addActions(WebSocketService.forceReconnect);
+    ActivityService.init();
 
     return () => {
       WebSocketService.disconnect();
+      ActivityService.cleanup();
     };
   }, [dispatch, navigate]);
 

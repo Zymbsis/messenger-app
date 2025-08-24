@@ -16,8 +16,7 @@ export class WebSocketService {
   private static dispatch = store.dispatch;
   private static updateQueryData = apiSlice.util.updateQueryData;
   private static navigateFn: NavigateFn = window.location.replace;
-
-  private static reconnectTimeout: number | null = null;
+  private static reconnectTimeout: NodeJS.Timeout | null = null;
   private static reconnectAttempts = 0;
   private static readonly maxReconnectAttempts = 3;
   private static readonly reconnectDelay = 1000;
@@ -35,21 +34,6 @@ export class WebSocketService {
       console.error('Failed to create WebSocket connection:', error);
       this.reconnect();
     }
-  }
-
-  static reconnect(): void {
-    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
-      toast.error('WebSocket: Failed to reconnect after multiple attempts');
-      return;
-    }
-
-    if (this.reconnectAttempts == 1) this.dispatch(refresh());
-
-    this.reconnectTimeout = setTimeout(() => {
-      this.reconnectAttempts++;
-
-      this.connect();
-    }, this.reconnectDelay * this.reconnectAttempts);
   }
 
   static disconnect(): void {
@@ -74,9 +58,46 @@ export class WebSocketService {
     this.ws.send(JSON.stringify({ type, payload }));
   }
 
-  static set navigate(navigateFn: NavigateFn) {
+  static setNavigateFn(navigateFn: NavigateFn): void {
     this.navigateFn = navigateFn;
   }
+
+  static reconnect(): void {
+    if (this.isConnected) return;
+
+    if (this.reconnectAttempts >= this.maxReconnectAttempts) {
+      toast.error('WebSocket: Failed to reconnect after multiple attempts');
+      return;
+    }
+
+    if (this.reconnectAttempts == 1) this.dispatch(refresh());
+
+    this.reconnectTimeout = setTimeout(() => {
+      this.reconnectAttempts++;
+
+      this.connect();
+    }, this.reconnectDelay * this.reconnectAttempts);
+  }
+
+  static forceReconnect = (): void => {
+    console.log('User is back, checking connection...');
+    if (WebSocketService.isConnected) return;
+    toast.info('Reconnecting to chat...');
+
+    WebSocketService.reconnectAttempts = 0;
+
+    if (WebSocketService.reconnectTimeout) {
+      clearTimeout(WebSocketService.reconnectTimeout);
+      WebSocketService.reconnectTimeout = null;
+    }
+
+    try {
+      WebSocketService.connect();
+    } catch (error) {
+      console.error('Force reconnect failed:', error);
+      WebSocketService.reconnect();
+    }
+  };
 
   private static get isConnected(): boolean {
     return this.ws?.readyState === WebSocket.OPEN;
