@@ -1,8 +1,10 @@
 import { MdDeleteOutline, MdModeEditOutline } from 'react-icons/md';
-import { useDeleteMessageMutation } from '../redux/api/apiSlice';
-import type { Message } from '../redux/messages/slice';
-import { formattedDateTimeEn } from '../helpers/formatting';
 import { CiEdit } from 'react-icons/ci';
+
+import { useDeleteMessageMutation } from '../redux/api/apiSlice';
+import { formattedDateTimeEn } from '../helpers/formatting';
+
+import type { Message } from '../types';
 
 type Props = {
   message: Message;
