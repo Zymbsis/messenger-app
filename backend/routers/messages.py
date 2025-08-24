@@ -6,7 +6,7 @@ from fastapi import APIRouter, HTTPException, status
 from repositories.chat import ChatRepository
 from repositories.message import MessageRepository
 from routers.websockets import manager
-from schemas import MessageCreate, MessageRead
+from schemas import MessageCreate, MessageRead, MessageUpdate
 
 router = APIRouter(prefix="/messages", tags=["Messages"])
 
@@ -73,3 +73,38 @@ async def delete_message(
         "payload": {"id": msg_id},
     }
     await manager.broadcast(json.dumps(broadcast_payload), message.chat_id)
+
+
+@router.put("/{msg_id}", response_model=MessageRead)
+async def edit_message(
+    msg_id: int,
+    msg_data: MessageUpdate,
+    current_user: CurrentUserDependency,
+    session: SessionDependency,
+):
+    msg_repo = MessageRepository(session)
+    chat_repo = ChatRepository(session)
+    message = await msg_repo.get_message_by_id(msg_id)
+    if not message:
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND, detail="Message not found"
+        )
+    is_chat_member = await chat_repo.is_chat_member(message.chat_id, current_user.id)
+    if not is_chat_member:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot edit message",
+        )
+    if current_user.id != message.sender_id:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Cannot edit message",
+        )
+    message.content = msg_data.content
+    updated_message = await msg_repo.update_message(message)
+    broadcast_payload = {
+        "type": "edit_message",
+        "payload": updated_message.model_dump(),
+    }
+    await manager.broadcast(json.dumps(broadcast_payload, default=str), message.chat_id)
+    return updated_message
