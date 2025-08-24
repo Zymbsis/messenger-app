@@ -12,18 +12,18 @@ const apiSlice = createApi({
       query: (chatId) => ({ url: `/messages/${chatId}` }),
       transformResponse: (response: Message[]) => response.toReversed(),
     }),
-    sendMessage: builder.mutation<Message, { content: string; chatId: number }>(
+    sendMessage: builder.mutation<Message, { chatId: number; content: string }>(
       {
-        query: ({ content, chatId }) => ({
+        query: ({ chatId, content }) => ({
           url: `/messages/${chatId}`,
           method: 'post',
           data: { content },
         }),
       },
     ),
-    editMessage: builder.mutation<Message, { content: string; msgId: number }>({
-      query: ({ content, msgId }) => ({
-        url: `/messages/${msgId}`,
+    editMessage: builder.mutation<Message, { id: number; content: string }>({
+      query: ({ id, content }) => ({
+        url: `/messages/${id}`,
         method: 'patch',
         data: { content },
       }),

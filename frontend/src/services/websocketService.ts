@@ -68,6 +68,12 @@ export class WebSocketService {
     }
   }
 
+  static send(type: string, payload: EventData['payload']): void {
+    if (!this.ws || !this.isConnected) return;
+
+    this.ws.send(JSON.stringify({ type, payload }));
+  }
+
   static set navigate(navigateFn: NavigateFn) {
     this.navigateFn = navigateFn;
   }
@@ -139,6 +145,7 @@ export class WebSocketService {
               if (targetIndex !== -1) draft[targetIndex].is_read = true;
             }),
           );
+
           break;
         }
 
