@@ -1,8 +1,11 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
-import { axiosBaseQuery } from './axiosBaseQuery';
-import type { Message } from '../messages/slice';
 
-type EventData =
+import { axiosBaseQuery } from './axiosBaseQuery';
+import { WebSocketService } from '../../services/websocketService';
+
+import type { Message } from '../../types';
+
+export type EventData =
   | {
       type: 'new_message';
       payload: Message;
@@ -29,34 +32,11 @@ const apiSlice = createApi({
         chatId,
         { updateCachedData, cacheDataLoaded, cacheEntryRemoved },
       ) => {
-        const socket = new WebSocket(`${WEBSOCKET_URL}/${chatId}`);
+        const url = `${WEBSOCKET_URL}/${chatId}`;
+        const socket = new WebSocketService(url, updateCachedData);
+
         try {
           await cacheDataLoaded;
-          socket.onmessage = (event) => {
-            const eventData: EventData = JSON.parse(event.data);
-
-            if (eventData.type === 'new_message') {
-              const message = eventData.payload;
-              updateCachedData((draft) => {
-                return [message, ...draft];
-              });
-            }
-            if (eventData.type === 'edit_message') {
-              const message = eventData.payload;
-              updateCachedData((draft) => {
-                const existing = draft.findIndex(
-                  (msg) => msg.id === message.id,
-                );
-                if (existing !== -1) draft[existing] = message;
-              });
-            }
-            if (eventData.type === 'delete_message') {
-              const { id } = eventData.payload;
-              updateCachedData((draft) =>
-                draft.filter((message) => message.id !== id),
-              );
-            }
-          };
         } catch (error) {
           console.error(error);
         }
