@@ -21,7 +21,10 @@ const users = createSlice({
       .addCase(
         getAllUsers.fulfilled,
         (state, action: PayloadAction<User[]>) => {
-          state.usersList = action.payload;
+          state.usersList = action.payload.map((user) => ({
+            ...user,
+            email: user.email.split('@')[0],
+          }));
         },
       );
   },
