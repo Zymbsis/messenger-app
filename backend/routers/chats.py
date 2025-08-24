@@ -89,4 +89,4 @@ async def delete_chat(
     chat_id: int, current_user: CurrentUserDependency, session: SessionDependency
 ):
     repo = ChatRepository(session)
-    repo.delete_chat(chat_id, current_user.id)
+    await repo.delete_chat(chat_id, current_user.id)

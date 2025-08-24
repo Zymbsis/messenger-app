@@ -55,5 +55,3 @@ class ChatRepository:
         chat = await self.get_chat_by_user_id(chat_id, user_id)
         await self.session.delete(chat)
         await self.session.commit()
-
-        return None

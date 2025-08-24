@@ -25,7 +25,7 @@ const chats = createSlice({
             (chat) => chat.id === action.payload.id,
           );
           if (existingChat) return;
-          state.chats.push(action.payload);
+          state.chats.unshift(action.payload);
         },
       )
       .addCase(deleteChat.fulfilled, (state, action: PayloadAction<number>) => {

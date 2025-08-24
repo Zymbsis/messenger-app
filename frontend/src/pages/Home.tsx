@@ -12,7 +12,7 @@ const Home = () => {
   const isAuthenticated = useAppSelector(selectIsAuthenticated);
 
   return (
-    <main className=' pb-52 h-full flex justify-end items-center flex-col gap-12 bg-[url(../assets/logo.webp)] bg-contain bg-no-repeat bg-position-[center_bottom_160px]'>
+    <main className='pb-52 h-full flex justify-end items-center flex-col gap-12 bg-[url(../assets/logo.webp)] bg-contain bg-no-repeat bg-position-[center_bottom_160px]'>
       <h1 className='text-4xl font-bold'>Welcome to the messenger app</h1>
       {!isAuthenticated && (
         <ul className='flex gap-5'>
