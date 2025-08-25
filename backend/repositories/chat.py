@@ -1,4 +1,3 @@
-from fastapi import HTTPException, status
 from models import Chat
 from sqlmodel import select
 from sqlmodel.ext.asyncio.session import AsyncSession

@@ -26,7 +26,7 @@ const DeleteChatButton = ({ chatId }: { chatId: number }) => {
   return (
     <button
       onClick={handleDeleteBtnClick}
-      className='h-full w-11 py-4 pr-3 pl-1'
+      className='h-full w-11 py-4 pr-3 pl-1 group-hover/chat:opacity-100 opacity-0 transition-opacity duration-300'
       type='button'
       title='Delete chat'>
       <MdDeleteOutline className='w-full h-full' />
