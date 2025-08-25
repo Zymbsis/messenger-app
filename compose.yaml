@@ -14,8 +14,6 @@ services:
       - '5173:5173'
     depends_on:
       - backend
-    environment:
-      - VITE_CLOUDINARY_URL=cloudinary://254647958518779:JaAgEyzrRb31gkGULDdJMoIx8DU@dsmlevmjk
 
   db:
     image: postgres:17.6-bookworm
