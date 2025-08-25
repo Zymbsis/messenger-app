@@ -33,12 +33,32 @@ class ChatRead(ChatCreate):
     updated_at: datetime
 
 
+class AttachmentCreate(SQLModel):
+    public_id: str
+    original_url: str
+    full_image_url: str
+    thumbnail_url: str
+    file_name: str
+    file_size: int
+    width: int
+    height: int
+    format: str
+    cloudinary_created_at: str
+
+
 class MessageCreate(SQLModel):
     content: str
+    attachments: list[AttachmentCreate] | None = None
 
 
 class MessageUpdate(MessageCreate):
     pass
+
+
+class AttachmentRead(AttachmentCreate):
+    id: int
+    message_id: int
+    created_at: datetime
 
 
 class MessageRead(MessageCreate):
@@ -47,5 +67,6 @@ class MessageRead(MessageCreate):
     sender_id: int
     message_type: str = "text"
     is_read: bool = False
+    attachments: list[AttachmentRead] = []
     created_at: datetime
     updated_at: datetime

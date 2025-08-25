@@ -9,6 +9,7 @@ sqlmodel = "*"
 asyncpg = "*"
 passlib = {extras = ["bcrypt"], version = "*"}
 pyjwt = "*"
+clean = "*"
 
 [dev-packages]
 
