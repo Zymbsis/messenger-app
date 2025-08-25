@@ -1,5 +1,10 @@
-import { useEffect, useRef, useState, type FocusEvent } from 'react';
-import clsx from 'clsx';
+import {
+  useEffect,
+  useRef,
+  useState,
+  type FocusEvent,
+  type KeyboardEvent,
+} from 'react';
 import { MdDeleteOutline, MdModeEditOutline } from 'react-icons/md';
 import { CiEdit } from 'react-icons/ci';
 import { FaRegCheckCircle } from 'react-icons/fa';
@@ -29,7 +34,7 @@ type Props = {
 
 const ChatMessage = ({ message, isOwnMessage }: Props) => {
   const messageRef = useRef<HTMLDivElement | null>(null);
-  const inputRef = useRef<HTMLInputElement | null>(null);
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const saveButtonRef = useRef<HTMLButtonElement | null>(null);
   const { handleSetDialogData, handleSetImageData } = useModalContext();
   const [editMode, setEditMode] = useState(false);
@@ -47,7 +52,10 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
   const handleStartEditing = () => {
     setEditedContent(message.content);
     setEditMode(true);
-    inputRef.current?.focus();
+    const timer = setTimeout(() => {
+      inputRef.current?.focus();
+      clearTimeout(timer);
+    }, 250);
   };
 
   const handleFinishEditing = () => {
@@ -67,11 +75,11 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
     setEditMode(false);
   };
 
-  const handleBlur = ({ relatedTarget }: FocusEvent<HTMLInputElement>) => {
+  const handleBlur = ({ relatedTarget }: FocusEvent<HTMLTextAreaElement>) => {
     if (relatedTarget !== saveButtonRef.current) handleCancelEditing();
   };
 
-  const handleKeyDown = ({ key }: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleKeyDown = ({ key }: KeyboardEvent<HTMLTextAreaElement>) => {
     if (key === 'Enter') {
       handleFinishEditing();
     } else if (key === 'Escape') {
@@ -105,12 +113,14 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
 
   return (
     <div ref={messageRef} className='relative group/message'>
-      {message.content && (
-        <input
+      {message.content && !editMode && (
+        <p className='w-[88%]'>{message.content}</p>
+      )}
+      {message.content && editMode && (
+        <textarea
           ref={inputRef}
-          className={clsx('w-11/12', { 'border p-2 rounded-lg': editMode })}
-          type='text'
           readOnly={!editMode}
+          className={'border p-2 rounded-lg, w-[88%] no-scrollbar'}
           value={editMode ? editedContent : message.content}
           onChange={(e) => setEditedContent(e.target.value)}
           onBlur={handleBlur}
