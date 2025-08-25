@@ -1,6 +1,7 @@
 from fastapi import HTTPException, status
 from models import Attachment, Message
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from sqlmodel.ext.asyncio.session import AsyncSession
 from schemas import AttachmentCreate
 
@@ -16,7 +17,7 @@ class MessageRepository:
         self.session.add(message)
         await self.session.commit()
         await self.session.refresh(message)
-        
+
         if attachments:
             for attachment_data in attachments:
                 attachment = Attachment(
@@ -33,15 +34,18 @@ class MessageRepository:
                     cloudinary_created_at=attachment_data.cloudinary_created_at,
                 )
                 self.session.add(attachment)
-            
+
             await self.session.commit()
-        
-        await self.session.refresh(message, attribute_names=["attachments"])
+
+            await self.session.refresh(message)
+            await self.session.refresh(message, attribute_names=["attachments"])
+
         return message
 
     async def update_message(self, message: Message) -> Message:
         self.session.add(message)
         await self.session.commit()
+        await self.session.refresh(message)
         await self.session.refresh(message, attribute_names=["attachments"])
         return message
 
@@ -50,31 +54,25 @@ class MessageRepository:
         await self.session.commit()
 
     async def get_message_by_id(self, msg_id: int) -> Message | None:
-        message = await self.session.get(Message, msg_id)
-        if message:
-            await self.session.refresh(message, attribute_names=["attachments"])
-        return message
+        statement = select(Message).where(Message.id == msg_id).options(selectinload(Message.attachments))
+        result = await self.session.exec(statement)
+        return result.scalar_one_or_none()
 
     async def get_message_by_user_id(self, msg_id: int, user_id: int) -> Message | None:
-        statement = select(Message).where(
-            (Message.id == msg_id) & (Message.sender_id == user_id)
+        statement = (
+            select(Message)
+            .where((Message.id == msg_id) & (Message.sender_id == user_id))
+            .options(selectinload(Message.attachments))
         )
         result = await self.session.exec(statement)
-        message = result.scalar_one_or_none()
-        if message:
-            await self.session.refresh(message, attribute_names=["attachments"])
-        return message
+        return result.scalar_one_or_none()
 
     async def get_messages_by_chat_id(self, chat_id: int) -> list[Message]:
         statement = (
             select(Message)
             .where(Message.chat_id == chat_id)
             .order_by(Message.created_at.asc())
+            .options(selectinload(Message.attachments))
         )
         result = await self.session.exec(statement)
-        messages = result.scalars().all()
-        
-        for message in messages:
-            await self.session.refresh(message, attribute_names=["attachments"])
-            
-        return messages
+        return result.scalars().all()

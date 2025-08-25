@@ -11,7 +11,7 @@ from schemas import MessageCreate, MessageRead, MessageUpdate
 router = APIRouter(prefix="/messages", tags=["Messages"])
 
 
-def message_to_dict(message):
+async def message_to_dict(message):
     return {
         "id": message.id,
         "chat_id": message.chat_id,
@@ -79,7 +79,7 @@ async def add_message(
         )
 
     message = await msg_repo.add_new_message(msg_data.content, chat_id, current_user.id, msg_data.attachments)
-    broadcast_payload = {"type": "new_message", "payload": message_to_dict(message)}
+    broadcast_payload = {"type": "new_message", "payload": await message_to_dict(message)}
     await manager.broadcast_to_chat(
         json.dumps(broadcast_payload, default=str), chat_id, session
     )
@@ -109,7 +109,7 @@ async def edit_message(
     updated_message = await msg_repo.update_message(message)
     broadcast_payload = {
         "type": "edit_message",
-        "payload": message_to_dict(updated_message),
+        "payload": await message_to_dict(updated_message),
     }
     await manager.broadcast_to_chat(
         json.dumps(broadcast_payload, default=str), updated_message.chat_id, session
