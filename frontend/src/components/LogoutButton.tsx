@@ -1,6 +1,9 @@
 import { CiLogout } from 'react-icons/ci';
 import { useAppDispatch } from '../redux/hooks';
 import { logout } from '../redux/auth/operations';
+
+import { WebSocketService } from '../services/websocketService';
+
 import { CONFIRM_MESSAGES } from '../helpers/confirmMessages';
 import { useModalContext } from '../helpers/modalContext';
 
@@ -11,7 +14,10 @@ const LogoutButton = () => {
   const handleLogoutBtnClick = () => {
     handleSetDialogData({
       title: CONFIRM_MESSAGES.logout.title,
-      onConfirm: () => dispatch(logout()),
+      onConfirm: () => {
+        dispatch(logout());
+        WebSocketService.disconnect();
+      },
     });
   };
 

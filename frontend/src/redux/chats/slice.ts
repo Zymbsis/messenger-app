@@ -1,6 +1,11 @@
 import { createSlice, type PayloadAction } from '@reduxjs/toolkit';
 
-import { createNewChat, deleteChatById, getAllChats } from './operations';
+import {
+  createNewChat,
+  deleteChatById,
+  getAllChats,
+  getChatById,
+} from './operations';
 
 import type { ChatsState, Chat } from '../../types/types';
 
@@ -16,6 +21,12 @@ const chats = createSlice({
   },
   extraReducers: (builder) =>
     builder
+      .addCase(getChatById.fulfilled, (state, action: PayloadAction<Chat>) => {
+        state.chats = state.chats.filter(
+          (chat) => chat.id !== action.payload.id,
+        );
+        state.chats.unshift(action.payload);
+      })
       .addCase(
         getAllChats.fulfilled,
         (state, action: PayloadAction<Chat[]>) => {

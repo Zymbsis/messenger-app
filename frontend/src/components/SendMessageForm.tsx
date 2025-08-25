@@ -79,12 +79,10 @@ const SendMessageForm = ({ chatId }: Props) => {
           </p>
           <div className='flex flex-wrap gap-1'>
             {files.map((file, index) => (
-              <span className='flex items-center gap-1 bg-gray-900 rounded px-1 py-1'>
-                <span
-                  key={`${file.name}-${index}`}
-                  className='text-xs text-white/80'>
-                  {file.name}
-                </span>
+              <span
+                key={`${file.name}-${index}`}
+                className='flex items-center gap-1 bg-gray-900 rounded px-1 py-1'>
+                <span className='text-xs text-white/80'>{file.name}</span>
                 <button
                   title='Remove file'
                   className='size-4 text-white/80'

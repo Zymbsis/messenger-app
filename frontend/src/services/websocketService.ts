@@ -3,7 +3,7 @@ import { toast } from 'sonner';
 import { store } from '../redux/store';
 import { apiSlice } from '../redux/api/apiSlice';
 import { deleteChat } from '../redux/chats/slice';
-import { getAllChats } from '../redux/chats/operations';
+import { getChatById } from '../redux/chats/operations';
 import { refresh } from '../redux/auth/operations';
 
 import type { EventData, NavigateFn } from '../types/types';
@@ -126,7 +126,7 @@ export class WebSocketService {
           const allChatsIds = store.getState().chats.chats.map(({ id }) => id);
 
           if (!allChatsIds.includes(chat_id)) {
-            this.dispatch(getAllChats());
+            this.dispatch(getChatById(chat_id));
           } else {
             this.dispatch(
               this.updateQueryData('getMessages', chat_id, (draft) => {

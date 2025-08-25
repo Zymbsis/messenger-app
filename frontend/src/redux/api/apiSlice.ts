@@ -24,10 +24,10 @@ const apiSlice = createApi({
       }),
     }),
     editMessage: builder.mutation<Message, EditMessagePayload>({
-      query: ({ id, ...data }) => ({
+      query: ({ id, content }) => ({
         url: `/messages/${id}`,
         method: 'patch',
-        data,
+        data: { content },
       }),
     }),
     deleteMessage: builder.mutation<void, number>({

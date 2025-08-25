@@ -154,7 +154,8 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
               type='button'
               title='Edit message'
               onClick={editMode ? handleFinishEditing : handleStartEditing}>
-              {editMode ? <FaRegCheckCircle /> : <MdModeEditOutline />}
+              {message.content &&
+                (editMode ? <FaRegCheckCircle /> : <MdModeEditOutline />)}
             </button>
             <button
               onClick={handleDeleteBtnClick}

@@ -20,6 +20,21 @@ export const getAllChats = createAsyncThunk<
   }
 });
 
+export const getChatById = createAsyncThunk<
+  Chat,
+  number,
+  { rejectValue: string }
+>('chats/getChatById', async (chatId, { rejectWithValue }) => {
+  try {
+    const { data } = await axiosInstance.get(`/chats/${chatId}`);
+    return data;
+  } catch (error) {
+    if (error instanceof AxiosError)
+      return rejectWithValue(error.response?.data?.message || error.message);
+    return rejectWithValue('Unknown error occurred');
+  }
+});
+
 export const createNewChat = createAsyncThunk<
   Chat,
   number,

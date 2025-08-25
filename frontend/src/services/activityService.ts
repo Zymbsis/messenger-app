@@ -1,4 +1,5 @@
 export class ActivityService {
+  private static debounceTimeout: NodeJS.Timeout | null = null;
   private static activityTimeout: NodeJS.Timeout | null = null;
   private static shouldReconnect = false;
   private static actions: Set<() => void> = new Set();
@@ -65,9 +66,19 @@ export class ActivityService {
     if (this.areListenersActive) return;
 
     this.ACTIVITY_EVENTS.forEach((event) => {
-      document.addEventListener(event, this.handleUserActivity, {
-        passive: true,
-      });
+      document.addEventListener(
+        event,
+        () => {
+          if (this.debounceTimeout) clearTimeout(this.debounceTimeout);
+
+          this.debounceTimeout = setTimeout(() => {
+            this.handleUserActivity();
+          }, 1500);
+        },
+        {
+          passive: true,
+        },
+      );
     });
     this.areListenersActive = true;
   }
