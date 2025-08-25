@@ -19,6 +19,7 @@ type Props = { chatId: number };
 const SendMessageForm = ({ chatId }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [files, setFiles] = useState<File[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const [sendMessage, { isLoading: isSending }] = useSendMessageMutation();
 
@@ -31,6 +32,7 @@ const SendMessageForm = ({ chatId }: Props) => {
     if (!isNotEmpty(content) && !files.length) return;
 
     try {
+      setIsLoading(true);
       const attachments = await CloudinaryService.upload(files);
 
       await sendMessage({
@@ -50,6 +52,8 @@ const SendMessageForm = ({ chatId }: Props) => {
       }, 25);
     } catch (error) {
       console.error('Failed to send the message: ', error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -113,13 +117,14 @@ const SendMessageForm = ({ chatId }: Props) => {
             }></textarea>
           <button
             title='Ctrl / Cmd + Enter to send'
-            disabled={isSending}
-            className='absolute bottom-0 right-0 size-12 p-2'>
-            <IoIosSend />
+            disabled={isLoading}
+            className='absolute bottom-0 right-0 size-12 p-2 disabled:*:opacity-30'>
+            <IoIosSend className='' />
           </button>
           <button
-            className='absolute top-3 right-3'
+            className='absolute top-3 right-3 disabled:*:opacity-30'
             type='button'
+            disabled={isLoading}
             onClick={handlePaperclipClick}>
             <GiPaperClip size={24} strokeWidth={2} />
           </button>
