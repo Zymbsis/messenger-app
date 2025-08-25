@@ -1,24 +1,17 @@
 services:
   backend:
-    build: ./backend
+    image: zymbsis/messenger-app-backend:latest
     ports:
       - '8000:8000'
-    volumes:
-      - ./backend:/app
-    working_dir: /app
-    command: pipenv run fastapi run main.py --host 0.0.0.0 --port 8000 --reload
     environment:
       - DATABASE_URL=postgresql://user:password@db:5432/messenger
     depends_on:
       - db
 
   frontend:
-    build: ./frontend
+    image: zymbsis/messenger-app-frontend:latest
     ports:
       - '5173:5173'
-    volumes:
-      - ./frontend:/app
-    working_dir: /app
     depends_on:
       - backend
 
