@@ -93,6 +93,7 @@ export class WebSocketService {
 
     try {
       WebSocketService.connect();
+      console.log('Force reconnect successful');
     } catch (error) {
       console.error('Force reconnect failed:', error);
       WebSocketService.reconnect();
@@ -121,6 +122,7 @@ export class WebSocketService {
       switch (type) {
         case 'new_message': {
           const { chat_id } = payload;
+
           const allChatsIds = store.getState().chats.chats.map(({ id }) => id);
 
           if (!allChatsIds.includes(chat_id)) {

@@ -28,6 +28,7 @@ type Props = {
 };
 
 const ChatMessage = ({ message, isOwnMessage }: Props) => {
+  const messageRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const saveButtonRef = useRef<HTMLButtonElement | null>(null);
   const { handleSetDialogData } = useModalContext();
@@ -37,7 +38,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
   const [editMessage] = useEditMessageMutation();
 
   const user = useAppSelector(selectCurrentUser);
-  const isInView = useInView(inputRef, { once: true });
+  const isInView = useInView(messageRef, { once: true });
 
   const createdAt = new Date(message.created_at);
   const updatedAt = new Date(message.updated_at);
@@ -103,17 +104,32 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
   ]);
 
   return (
-    <div className='relative group/message'>
-      <input
-        ref={inputRef}
-        className={clsx({ 'border p-2 rounded-lg': editMode })}
-        type='text'
-        readOnly={!editMode}
-        value={editMode ? editedContent : message.content}
-        onChange={(e) => setEditedContent(e.target.value)}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-      />
+    <div ref={messageRef} className='relative group/message'>
+      {message.content && (
+        <input
+          ref={inputRef}
+          className={clsx({ 'border p-2 rounded-lg': editMode })}
+          type='text'
+          readOnly={!editMode}
+          value={editMode ? editedContent : message.content}
+          onChange={(e) => setEditedContent(e.target.value)}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+        />
+      )}
+      {!!message.attachments?.length && (
+        <div className='flex flex-wrap gap-1 p-2'>
+          {message.attachments?.map((attachment) => (
+            <img
+              key={attachment.public_id}
+              className='rounded-md bg-gray-100 max-h-20'
+              title={attachment.file_name}
+              src={attachment.thumbnail_url}
+              alt={attachment.file_name}
+            />
+          ))}
+        </div>
+      )}
       <div className='flex flex-nowrap gap-2 items-center justify-end'>
         <span className='gap-2 text-xs italic font-thin inline-flex shrink-0 md:whitespace-nowrap'>
           {isMessageEdited && <CiEdit size={14} title='Was edited' />}

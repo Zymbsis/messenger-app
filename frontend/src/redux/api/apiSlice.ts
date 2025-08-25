@@ -2,7 +2,11 @@ import { createApi } from '@reduxjs/toolkit/query/react';
 
 import { axiosBaseQuery } from './axiosBaseQuery';
 
-import type { Message } from '../../types/types';
+import type {
+  Message,
+  EditMessagePayload,
+  SendMessagePayload,
+} from '../../types/types';
 
 const apiSlice = createApi({
   reducerPath: 'api',
@@ -12,20 +16,18 @@ const apiSlice = createApi({
       query: (chatId) => ({ url: `/messages/${chatId}` }),
       transformResponse: (response: Message[]) => response.toReversed(),
     }),
-    sendMessage: builder.mutation<Message, { chatId: number; content: string }>(
-      {
-        query: ({ chatId, content }) => ({
-          url: `/messages/${chatId}`,
-          method: 'post',
-          data: { content },
-        }),
-      },
-    ),
-    editMessage: builder.mutation<Message, { id: number; content: string }>({
-      query: ({ id, content }) => ({
+    sendMessage: builder.mutation<Message, SendMessagePayload>({
+      query: ({ chatId, ...data }) => ({
+        url: `/messages/${chatId}`,
+        method: 'post',
+        data,
+      }),
+    }),
+    editMessage: builder.mutation<Message, EditMessagePayload>({
+      query: ({ id, ...data }) => ({
         url: `/messages/${id}`,
         method: 'patch',
-        data: { content },
+        data,
       }),
     }),
     deleteMessage: builder.mutation<void, number>({

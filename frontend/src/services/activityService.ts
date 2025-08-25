@@ -84,6 +84,7 @@ export class ActivityService {
     this.ACTIVITY_EVENTS.forEach((event) => {
       document.removeEventListener(event, this.handleUserActivity);
     });
+
     this.areListenersActive = false;
   }
 

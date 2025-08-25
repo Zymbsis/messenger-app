@@ -11,6 +11,17 @@ export type BaseQuery = {
   params?: AxiosRequestConfig['params'];
 };
 
+export type SendMessagePayload = {
+  chatId: number;
+  content: string;
+  attachments: AttachmentMetadata[];
+};
+
+export type EditMessagePayload = {
+  id: number;
+  content: string;
+};
+
 export type ApiResult = AxiosResponse['data'];
 
 export type ApiError = {
@@ -49,6 +60,7 @@ export type Message = {
   is_read: boolean;
   created_at: string;
   updated_at: string;
+  attachments: AttachmentMetadata[];
 };
 
 export type EventData =
@@ -74,4 +86,18 @@ export type DialogData = {
   onCancel?: () => void;
   onConfirm: () => void;
 };
+
 export type NavigateFn = (path: string | URL) => void;
+
+export type AttachmentMetadata = {
+  public_id: string;
+  original_url: string;
+  full_image_url: string;
+  thumbnail_url: string;
+  file_name: string;
+  file_size: number;
+  width: number;
+  height: number;
+  format: string;
+  cloudinary_created_at: string;
+};
