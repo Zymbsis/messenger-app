@@ -29,31 +29,49 @@ The frontend is a single-page application (SPA) built with React and TypeScript.
 
 You will need Docker and Docker Compose to run this project.
 
-**1. Clone the repository**
+### For Development
 
-First, get the project code on your computer.
+This method is for developers who want to work on the source code and see live changes. This mode uses `compose.dev.yaml` to build images locally and mount volumes.
+
+**1. Clone the repository**
 
 ```bash
 git clone <repository-url>
 cd messenger-app
 ```
 
-**2. Build and run the containers**
-
-This command will build the images for the frontend and backend and start all
-the necessary services.
+**2. Run the application**
 
 ```bash
-docker compose up --build -d
+docker compose -f compose.dev.yaml up --build -d
 ```
 
+This will start the application with live-reloading enabled. Changes to the source code in the `backend` or `frontend` directory will be reflected automatically.
+
+### For Deployment
+
+This method runs the pre-built, stable images from Docker Hub. It's the way to run the application on a server or for a clean local test. This mode uses the main `compose.yaml` file.
+
+**1. Get the compose file**
+
+You only need the `compose.yaml` file. You can get it by cloning the repository or downloading it directly.
+
+**2. Run the application**
+
+Make sure you are in the same directory as the `compose.yaml` file and run:
+
+```bash
+docker compose up -d
+```
+
+Docker will pull the required images from Docker Hub and start the application.
+
 > [!NOTE]
-> The application will work out-of-the-box with default development settings. For production, you should create a `.env` file to set your own secret keys. You can copy the `.env-example` file to get started.
+> For both modes, the application requires a running Docker environment. For the first run, it might take some time to download the base images and build the containers.
 
+### Accessing the Application
 
-**3. Open the application**
+Once running, the application will be available at:
 
-- The **frontend** will be available at
-  [http://localhost:5173](http://localhost:5173)
-- The **backend** API documentation will be at
-  [http://localhost:8000/docs](http://localhost:8000/docs)
+- **Frontend:** [http://localhost:5173](http://localhost:5173)
+- **Backend API Docs:** [http://localhost:8000/docs](http://localhost:8000/docs)
