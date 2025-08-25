@@ -32,10 +32,10 @@ const ChatsList = () => {
     );
 
   return (
-    <ul className='w-1/3 border-r h-full overflow-y-auto custom-scrollbar'>
+    <ul className='w-1/3 border-r border-black/10 h-full overflow-y-auto custom-scrollbar'>
       {chatsWithContacts.map((chat) => (
         <li
-          className='has-[.isActive]:bg-black/90 has-[.isActive]:text-white h-16 flex justify-between items-center pl-3 gap-2 border-b'
+          className='has-[.isActive]:bg-black/90 has-[.isActive]:text-white h-16 flex justify-between items-center pl-3 gap-2 border-b border-black/10'
           key={chat.id}>
           <NavLink
             className={({ isActive }) =>

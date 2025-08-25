@@ -17,8 +17,10 @@ class ChatRepository:
         return chat
 
     async def get_chats_by_user_id(self, user_id: int) -> list[Chat]:
-        statement = select(Chat).where(
-            (Chat.user1_id == user_id) | (Chat.user2_id == user_id)
+        statement = (
+            select(Chat)
+            .where((Chat.user1_id == user_id) | (Chat.user2_id == user_id))
+            .order_by(Chat.created_at.desc())
         )
         result = await self.session.exec(statement)
         return result.all()
