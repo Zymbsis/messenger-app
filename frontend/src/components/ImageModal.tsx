@@ -5,13 +5,11 @@ type Props = { image: AttachmentMetadata };
 
 const ImageModal = ({ image }: Props) => {
   return (
-    <form
-      method='dialog'
-      className='relative w-[80vw] h-[90vh] flex justify-center rounded-lg'>
+    <form method='dialog' className='relative flex justify-center rounded-lg'>
       <img
         src={image.full_image_url}
         alt={image.file_name}
-        className='object-contain w-full h-auto'
+        className='object-contain w-full h-auto max-h-[90vh] max-w-[80vw]'
       />
 
       <button

@@ -11,38 +11,40 @@ class MessageRepository:
         self.session = session
 
     async def add_new_message(
-        self, content: str, chat_id: int, sender_id: int, attachments: list[AttachmentCreate] | None = None
+        self,
+        content: str,
+        chat_id: int,
+        sender_id: int,
+        attachments: list[AttachmentCreate] | None = None,
     ) -> Message:
         message = Message(chat_id=chat_id, sender_id=sender_id, content=content)
+        if attachments:
+            message.attachments = [
+                Attachment(**att.model_dump()) for att in attachments
+            ]
         self.session.add(message)
         await self.session.commit()
-        await self.session.refresh(message)
 
-        if attachments:
-            for attachment_data in attachments:
-                attachment = Attachment(
-                    message_id=message.id,
-                    public_id=attachment_data.public_id,
-                    original_url=attachment_data.original_url,
-                    full_image_url=attachment_data.full_image_url,
-                    thumbnail_url=attachment_data.thumbnail_url,
-                    file_name=attachment_data.file_name,
-                    file_size=attachment_data.file_size,
-                    width=attachment_data.width,
-                    height=attachment_data.height,
-                    format=attachment_data.format,
-                    cloudinary_created_at=attachment_data.cloudinary_created_at,
-                )
-                self.session.add(attachment)
-
-            await self.session.commit()
-
-            await self.session.refresh(message)
-            await self.session.refresh(message, attribute_names=["attachments"])
-
-        return message
+        stmt = (
+            select(Message)
+            .where(Message.id == message.id)
+            .options(selectinload(Message.attachments))
+        )
+        result = await self.session.exec(stmt)
+        new_message = result.scalar_one_or_none()
+        if not new_message:
+            raise HTTPException(
+                status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+                detail="Could not create message",
+            )
+        return new_message
 
     async def update_message(self, message: Message) -> Message:
+        if message.attachments:
+            message.attachments = [
+                Attachment(**att.model_dump()) for att in message.attachments or []
+            ]
+
         self.session.add(message)
         await self.session.commit()
         await self.session.refresh(message)
@@ -54,7 +56,11 @@ class MessageRepository:
         await self.session.commit()
 
     async def get_message_by_id(self, msg_id: int) -> Message | None:
-        statement = select(Message).where(Message.id == msg_id).options(selectinload(Message.attachments))
+        statement = (
+            select(Message)
+            .where(Message.id == msg_id)
+            .options(selectinload(Message.attachments))
+        )
         result = await self.session.exec(statement)
         return result.scalar_one_or_none()
 
@@ -71,8 +77,8 @@ class MessageRepository:
         statement = (
             select(Message)
             .where(Message.chat_id == chat_id)
-            .order_by(Message.created_at.asc())
             .options(selectinload(Message.attachments))
+            .order_by(Message.created_at.asc())
         )
         result = await self.session.exec(statement)
         return result.scalars().all()

@@ -123,16 +123,16 @@ class Attachment(SQLModel, table=True):
 
     id: int | None = Field(default=None, primary_key=True)
     message_id: int = Field(foreign_key="messages.id", index=True)
-    public_id: str = Field(max_length=255)  # Cloudinary public_id
-    original_url: str = Field(max_length=500)  # Direct Cloudinary URL
-    full_image_url: str = Field(max_length=500)  # Optimized full image URL
-    thumbnail_url: str = Field(max_length=500)  # Thumbnail URL
+    public_id: str = Field(max_length=255)
+    original_url: str = Field(max_length=500)
+    full_image_url: str = Field(max_length=500)
+    thumbnail_url: str = Field(max_length=500)
     file_name: str = Field(max_length=255)
-    file_size: int = Field()  # Size in bytes
-    width: int = Field()  # Image width
-    height: int = Field()  # Image height
-    format: str = Field(max_length=10)  # File format (jpg, png, etc.)
-    cloudinary_created_at: str = Field(max_length=50)  # Cloudinary timestamp
+    file_size: int = Field()
+    width: int = Field()
+    height: int = Field()
+    format: str = Field(max_length=10)
+    cloudinary_created_at: str = Field(max_length=50)
     created_at: datetime = Field(
         sa_column=Column(
             DateTime(timezone=True),

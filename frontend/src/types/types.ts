@@ -20,6 +20,7 @@ export type SendMessagePayload = {
 export type EditMessagePayload = {
   id: number;
   content: string;
+  attachments?: AttachmentMetadata[] | null;
 };
 
 export type ApiResult = AxiosResponse['data'];

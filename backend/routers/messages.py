@@ -11,37 +11,6 @@ from schemas import MessageCreate, MessageRead, MessageUpdate
 router = APIRouter(prefix="/messages", tags=["Messages"])
 
 
-async def message_to_dict(message):
-    return {
-        "id": message.id,
-        "chat_id": message.chat_id,
-        "sender_id": message.sender_id,
-        "content": message.content,
-        "message_type": message.message_type,
-        "is_read": message.is_read,
-        "attachments": [
-            {
-                "id": att.id,
-                "message_id": att.message_id,
-                "public_id": att.public_id,
-                "original_url": att.original_url,
-                "full_image_url": att.full_image_url,
-                "thumbnail_url": att.thumbnail_url,
-                "file_name": att.file_name,
-                "file_size": att.file_size,
-                "width": att.width,
-                "height": att.height,
-                "format": att.format,
-                "cloudinary_created_at": att.cloudinary_created_at,
-                "created_at": att.created_at,
-            }
-            for att in message.attachments
-        ],
-        "created_at": message.created_at,
-        "updated_at": message.updated_at,
-    }
-
-
 @router.get("/{chat_id}", response_model=list[MessageRead])
 async def get_messages_by_chat(
     chat_id: int, current_user: CurrentUserDependency, session: SessionDependency
@@ -78,8 +47,13 @@ async def add_message(
             status_code=status.HTTP_404_NOT_FOUND, detail="Chat not found"
         )
 
-    message = await msg_repo.add_new_message(msg_data.content, chat_id, current_user.id, msg_data.attachments)
-    broadcast_payload = {"type": "new_message", "payload": await message_to_dict(message)}
+    message = await msg_repo.add_new_message(
+        msg_data.content, chat_id, current_user.id, msg_data.attachments
+    )
+
+    message_read = MessageRead.model_validate(message)
+    broadcast_payload = {"type": "new_message", "payload": message_read.model_dump()}
+
     await manager.broadcast_to_chat(
         json.dumps(broadcast_payload, default=str), chat_id, session
     )
@@ -107,10 +81,10 @@ async def edit_message(
 
     message.content = msg_data.content
     updated_message = await msg_repo.update_message(message)
-    broadcast_payload = {
-        "type": "edit_message",
-        "payload": await message_to_dict(updated_message),
-    }
+
+    message_read = MessageRead.model_validate(updated_message)
+    broadcast_payload = {"type": "edit_message", "payload": message_read.model_dump()}
+    
     await manager.broadcast_to_chat(
         json.dumps(broadcast_payload, default=str), updated_message.chat_id, session
     )

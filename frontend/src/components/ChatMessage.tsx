@@ -108,7 +108,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
       {message.content && (
         <input
           ref={inputRef}
-          className={clsx({ 'border p-2 rounded-lg': editMode })}
+          className={clsx('w-11/12', { 'border p-2 rounded-lg': editMode })}
           type='text'
           readOnly={!editMode}
           value={editMode ? editedContent : message.content}

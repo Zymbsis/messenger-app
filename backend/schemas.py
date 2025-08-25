@@ -67,6 +67,6 @@ class MessageRead(MessageCreate):
     sender_id: int
     message_type: str = "text"
     is_read: bool = False
-    attachments: list[AttachmentRead] = []
+    attachments: list[AttachmentRead] | None = None
     created_at: datetime
     updated_at: datetime
