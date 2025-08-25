@@ -31,7 +31,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
   const messageRef = useRef<HTMLDivElement | null>(null);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const saveButtonRef = useRef<HTMLButtonElement | null>(null);
-  const { handleSetDialogData } = useModalContext();
+  const { handleSetDialogData, handleSetImageData } = useModalContext();
   const [editMode, setEditMode] = useState(false);
   const [editedContent, setEditedContent] = useState('');
   const [deleteMessage] = useDeleteMessageMutation();
@@ -126,6 +126,7 @@ const ChatMessage = ({ message, isOwnMessage }: Props) => {
               title={attachment.file_name}
               src={attachment.thumbnail_url}
               alt={attachment.file_name}
+              onClick={() => handleSetImageData(attachment)}
             />
           ))}
         </div>
