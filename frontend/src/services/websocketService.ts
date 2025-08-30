@@ -14,6 +14,7 @@ export class WebSocketService {
   private static ws: WebSocket | null = null;
 
   private static dispatch = store.dispatch;
+  private static isAuthenticated = store.getState().auth.isAuthenticated;
   private static updateQueryData = apiSlice.util.updateQueryData;
   private static navigateFn: NavigateFn = window.location.replace;
   private static reconnectTimeout: NodeJS.Timeout | null = null;
@@ -189,6 +190,8 @@ export class WebSocketService {
     };
 
     this.ws.onclose = () => {
+      if (!this.isAuthenticated) return;
+
       console.log('WebSocket disconnected, attempting to reconnect...');
       this.reconnect();
     };
